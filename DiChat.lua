@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("{FBEC69}1.6")
+script_version("{FBEC69}1.7")
 script_description('Скрипт для скипа мусора, изменения тэгов...')
 
 local enable_autoupdate = true -- false to disable auto-update + disable sending initial telemetry (server, moonloader version, script version, samp nickname, virtual volume serial number)
