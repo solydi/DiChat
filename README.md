@@ -30,9 +30,6 @@ Provides commands like **'/update'** to manually check for and apply updates.
 Download the script and place it in the MoonLoader scripts directory.
 Ensure MoonLoader is installed and configured correctly.
 
-- **Commands:**
-**'/update'**: Manually checks for updates and applies them if available.
-
 ## Configuration
 
 The script can be configured by modifying specific variables within the script. Key configurations include:
