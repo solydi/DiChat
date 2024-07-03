@@ -11,18 +11,25 @@
 - **Automated Message Filtering:**
 Automatically skips predefined "trash" messages to keep the chat clean and relevant.
 
-- **Version and Update Management:**
-Checks for updates by comparing the local script version with the version available on a remote server.
-Automatically downloads and updates the script if a newer version is found.
+- **Auto-Update System:**
+The script includes an auto-update mechanism that checks for the latest version from a specified GitHub repository, ensuring users always have the most up-to-date features and bug fixes.
 
-- **Integration with MoonLoader:**
-Utilizes MoonLoader for downloading updates and handling script dependencies.
+- **Enhanced Chat Functions:**
+Nickname Coloring: Automatically colors player nicknames in chat to enhance visibility and distinction.
+
+- **OOC Chat Bubbles:**
+Displays out-of-character (OOC) chat messages above players' heads for better roleplay immersion.
 
 - **Customizable Alerts and Notifications:**
 Displays customizable in-game notifications and alerts to players.
 
-- **Command Integration:**
-Provides commands like **'/update'** to manually check for and apply updates.
+- **Message Parsing:**
+Parses chat messages to include useful data such as remaining mute time.
+
+## Utility Functions:
+
+- **ARGB Color Management:**
+Functions to handle ARGB color values for customization and visual enhancements. 
 
 ## Usage
 
@@ -34,9 +41,8 @@ Ensure MoonLoader is installed and configured correctly.
 
 The script can be configured by modifying specific variables within the script. Key configurations include:
 
-- **'update_url':** URL for checking updates.
-- **'script_url':** URL from where the script is downloaded.
-- **'update_path':** Path where the update information is stored.
+- **'Update.json_url':** URL for checking updates.
+- **'Update.url':** Path where the update information is stored.
 
 ## Requirements
 
