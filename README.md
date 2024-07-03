@@ -37,9 +37,9 @@ Ensure MoonLoader is installed and configured correctly.
 
 The script can be configured by modifying specific variables within the script. Key configurations include:
 
-- **update_url:** URL for checking updates.
-- **script_url:** URL from where the script is downloaded.
-- **update_path:** Path where the update information is stored.
+- **'update_url':** URL for checking updates.
+- **'script_url':** URL from where the script is downloaded.
+- **'update_path':** Path where the update information is stored.
 
 ## Requirements
 
