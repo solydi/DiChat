@@ -1,6 +1,6 @@
 # DiChat
 
-### [Main Developer (Telegram)](https://t.me/lisowsky)
+### [Главный разработчик (Telegram)](https://t.me/lisowsky)
 
 ## Описание DiChat.lua для репозитория GitHub
 
