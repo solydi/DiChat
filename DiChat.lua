@@ -1,7 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
 script_version("{FBEC69}1.7")
-script_description('Скрипт для скипа мусора, изменения тэгов...')
 
 local enable_autoupdate = true -- false to disable auto-update + disable sending initial telemetry (server, moonloader version, script version, samp nickname, virtual volume serial number)
 local autoupdate_loaded = false
@@ -120,13 +119,8 @@ function main()
     if not isSampLoaded() or not isSampfuncsLoaded() then return end
     while not isSampAvailable() do wait(0) end
 	sampAddChatMessage('{F48B8C}[INFO] {ffffff}Скрипт {ff7e14}"DiChat" {ffffff}готов к работе! Автор: {ff7e14}solodi {ffffff}| Версия: ' .. thisScript().version,-1)
-end
 
-function update()
-	if not isSampfuncsLoaded() or not isSampLoaded() then
-        return
-    end
-    while not isSampAvailable() do
+	while not isSampAvailable() do
         wait(100)
     end
 
@@ -134,7 +128,6 @@ function update()
         pcall(Update.check, Update.json_url, Update.prefix, Update.url)
     end
 end
-
 
 function se.onShowDialog(id, style, title, button1, button2, text)
 	--скип диалога фамавто
