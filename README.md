@@ -22,7 +22,7 @@ Utilizes MoonLoader for downloading updates and handling script dependencies.
 Displays customizable in-game notifications and alerts to players.
 
 - **Command Integration:**
-Provides commands like /update to manually check for and apply updates.
+Provides commands like **'/update'** to manually check for and apply updates.
 
 ## Usage
 
@@ -31,7 +31,7 @@ Download the script and place it in the MoonLoader scripts directory.
 Ensure MoonLoader is installed and configured correctly.
 
 - **Commands:**
-/update: Manually checks for updates and applies them if available.
+**'/update'**: Manually checks for updates and applies them if available.
 
 ## Configuration
 
