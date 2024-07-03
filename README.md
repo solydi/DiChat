@@ -1,4 +1,4 @@
-# Dichat
+# DiChat
 
 ### [Main Developer (Telegram)](https://t.me/lisowsky)
 
