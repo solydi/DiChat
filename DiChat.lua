@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.8.1")
+script_version("1.8.2")
 
 local encoding = require 'encoding'
 
@@ -216,6 +216,11 @@ function se.onShowDialog(id, style, title, button1, button2, text)
 	--х2 Vice City
 	if text:find ("Мы ради видеть вас на сервере Vice City. Сейчас на сервере проходит акция [FA5858]X2 PayDay") then
 		sampSendDialogResponse(id, 1, 0, false)
+		return false
+	end
+	-- скип диалога оплаты налогов с Metall Bank Card
+	if id == 15531 then
+		sampSendDialogResponse(15531, 1)
 		return false
 	end
 end
