@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.8.2")
+script_version("1.8.3")
 
 local encoding = require 'encoding'
 
@@ -118,6 +118,10 @@ local skip = [[
 [Подсказка] {ffffff}Вы можете взять табличку для митинга на {ff0000}отмеченном пикапе{ffffff}.
 [Подсказка] {ffffff}Вы покинули зону митинга.
 У Вас имеется предмет 'Эффект x4 пополнение счёта (24 часа)', который можно использовать.
+Обратите внимание! Вы можете улучшить свои характеристики на поле битвы, купив списанный полицейский бронежилет на складе в Las Venturas.
+Списанный бронежилет на 4 часа даст вашему персонажу +38 ед. защиты, +7 ед. к урону, +10 ед. к удаче, а также +50 макс. HP и +40 макс. брони.
+Найти склад можно с помощью /GPS - Разное - Склад списанных бронежилетов.
+[Информация] Продавай и покупай автомобильные номера и СИМ-карты в Лас Вентурасе! /GPS - Разное - Рынок автомобильных номеров и СИМ-карт.
 ]]
 
 function main()
@@ -137,8 +141,8 @@ end
 
 function se.onShowDialog(id, style, title, button1, button2, text)
 	-- скип диалога фамавто
-	if id == 26012 then
-		sampSendDialogResponse(26012, 0)
+	if id == 26013 then
+		sampSendDialogResponse(26013, 0)
 		return false
 	end
 	-- cкип диалога на рядом стоящих буквой R
@@ -285,12 +289,6 @@ function se.onServerMessage(color, text)
 		if text:match("%[VIP]Объявление: .+%. .+_.+%[.+] Тел%. .+") then
 			local ad, sender, tel = string.match(text, "%[VIP]Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)")
 			sampAddChatMessage("{FCAA4D}VIP AD: {ffeadb}" .. ad .. ".{ff9a76} T: " .. tel .. ". " .. sender, -1)
-			return false
-		end
-		--в случае большой объявы
-		if text:match("Объявление: .+%. .+_.+ %[.+]%. Тел: .+") then
-			local ad, sender, tel = string.match(text, "Объявление: (.+)%. (.+_.+) %[.+]%. Тел:")
-			sampAddChatMessage("{87b650}AD: {ffeadb}" .. ad .. ".{ff9a76}. " .. sender, -1)
 			return false
 		end
 	end
