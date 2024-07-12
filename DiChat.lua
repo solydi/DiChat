@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.8.4")
+script_version("1.8.5")
 
 local encoding = require 'encoding'
 
@@ -174,6 +174,11 @@ function se.onShowDialog(id, style, title, button1, button2, text)
     end
 	-- скип получени€ мусорного предмета х4 с сундука
 	if text:find ("”дача! ѕри использовании сундука с рулеткой") then
+		sampSendDialogResponse(id, 1, 0, false)
+		return false
+	end
+	-- скип выпадени€ х4 с платинового сундука
+	if text:find ("”дача! ѕри использовании платинового сундука с рулеткой") then
 		sampSendDialogResponse(id, 1, 0, false)
 		return false
 	end
