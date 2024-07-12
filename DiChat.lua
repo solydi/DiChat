@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.8.3")
+script_version("1.8.4")
 
 local encoding = require 'encoding'
 
@@ -146,7 +146,7 @@ function se.onShowDialog(id, style, title, button1, button2, text)
 		return false
 	end
 	-- cкип диалога на рядом стоящих буквой R
-	if id == 26611 then
+	if id == 26612 then
 		sampSendDialogResponse(26611, 0)
 		return false
 	end
