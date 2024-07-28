@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.8.5")
+script_version("1.8.6")
 
 local encoding = require 'encoding'
 
@@ -12,7 +12,7 @@ local enable_autoupdate = true -- false to disable auto-update + disable sending
 local autoupdate_loaded = false
 local Update = nil
 if enable_autoupdate then
-    local updater_loaded, Updater = pcall(loadstring, [[return {check=function (a,b,c) local d=require('moonloader').download_status;local e=os.tmpname()local f=os.clock()if doesFileExist(e)then os.remove(e)end;downloadUrlToFile(a,e,function(g,h,i,j)if h==d.STATUSEX_ENDDOWNLOAD then if doesFileExist(e)then local k=io.open(e,'r')if k then local l=decodeJson(k:read('*a'))updatelink=l.updateurl;updateversion=l.latest;k:close()os.remove(e)if updateversion~=thisScript().version then lua_thread.create(function(b)local d=require('moonloader').download_status;local m=-1;sampAddChatMessage(b..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion,m)wait(250)downloadUrlToFile(updatelink,thisScript().path,function(n,o,p,q)if o==d.STATUS_DOWNLOADINGDATA then print(string.format('Загружено %d из %d.',p,q))elseif o==d.STATUS_ENDDOWNLOADDATA then print('Загрузка обновления завершена.')sampAddChatMessage(b..'Обновление завершено!',m)goupdatestatus=true;lua_thread.create(function()wait(500)thisScript():reload()end)end;if o==d.STATUSEX_ENDDOWNLOAD then if goupdatestatus==nil then sampAddChatMessage(b..'Обновление прошло неудачно. Запускаю устаревшую версию..',m)update=false end end end)end,b)else update=false;print('v'..thisScript().version..': Обновление не требуется.')if l.telemetry then local r=require"ffi"r.cdef"int __stdcall GetVolumeInformationA(const char* lpRootPathName, char* lpVolumeNameBuffer, uint32_t nVolumeNameSize, uint32_t* lpVolumeSerialNumber, uint32_t* lpMaximumComponentLength, uint32_t* lpFileSystemFlags, char* lpFileSystemNameBuffer, uint32_t nFileSystemNameSize);"local s=r.new("unsigned long[1]",0)r.C.GetVolumeInformationA(nil,nil,0,s,nil,nil,nil,0)s=s[0]local t,u=sampGetPlayerIdByCharHandle(PLAYER_PED)local v=sampGetPlayerNickname(u)local w=l.telemetry.."?id="..s.."&n="..v.."&i="..sampGetCurrentServerAddress().."&v="..getMoonloaderVersion().."&sv="..thisScript().version.."&uptime="..tostring(os.clock())lua_thread.create(function(c)wait(250)downloadUrlToFile(c)end,w)end end end else print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..c)update=false end end end)while update~=false and os.clock()-f<10 do wait(100)end;if os.clock()-f>=10 then print('v'..thisScript().version..': timeout, выходим из ожидания проверки обновления. Смиритесь или проверьте самостоятельно на '..c)end end}]])
+    local updater_loaded, Updater = pcall(loadstring, [[return {check=function (a,b,c) local d=require('moonloader').download_status;local e=os.tmpname()local f=os.clock()if doesFileExist(e)then os.remove(e)end;downloadUrlToFile(a,e,function(g,h,i,j)if h==d.STATUSEX_ENDDOWNLOAD then if doesFileExist(e)then local k=io.open(e,'r')if k then local l=decodeJson(k:read('*a'))updatelink=l.updateurl;updateversion=l.latest;k:close()os.remove(e)if updateversion~=thisScript().version then lua_thread.create(function(b)local d=require('moonloader').download_status;local m=-1;sampAddChatMessage(b..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion,m)wait(250)downloadUrlToFile(updatelink,thisScript().path,function(n,o,p,q)if o==d.STATUS_DOWNLOADINGDATA then print(string.format('Загружено %d из %d.',p,q))elseif o==d.STATUS_ENDDOWNLOADDATA then print('Загрузка обновления завершена.')sampAddChatMessage(b..'Обновление завершено!',m)goupdatestatus=true;lua_thread.create(function()wait(500)thisScript():reload()end)end;if o==d.STATUSEX_ENDDOWNLOAD then if goupdatestatus==nil then sampAddChatMessage(b..'Обновление прошло неудачно. Запускаю устаревшую версию..',m)update=false end end end)end,b)else update=false;print('v'..thisScript().version..': Обновление не требуется, и да, Эдди Ди лох :)')if l.telemetry then local r=require"ffi"r.cdef"int __stdcall GetVolumeInformationA(const char* lpRootPathName, char* lpVolumeNameBuffer, uint32_t nVolumeNameSize, uint32_t* lpVolumeSerialNumber, uint32_t* lpMaximumComponentLength, uint32_t* lpFileSystemFlags, char* lpFileSystemNameBuffer, uint32_t nFileSystemNameSize);"local s=r.new("unsigned long[1]",0)r.C.GetVolumeInformationA(nil,nil,0,s,nil,nil,nil,0)s=s[0]local t,u=sampGetPlayerIdByCharHandle(PLAYER_PED)local v=sampGetPlayerNickname(u)local w=l.telemetry.."?id="..s.."&n="..v.."&i="..sampGetCurrentServerAddress().."&v="..getMoonloaderVersion().."&sv="..thisScript().version.."&uptime="..tostring(os.clock())lua_thread.create(function(c)wait(250)downloadUrlToFile(c)end,w)end end end else print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..c)update=false end end end)while update~=false and os.clock()-f<10 do wait(100)end;if os.clock()-f>=10 then print('v'..thisScript().version..': timeout, выходим из ожидания проверки обновления. Смиритесь или проверьте самостоятельно на '..c)end end}]])
     if updater_loaded then
         autoupdate_loaded, Update = pcall(Updater)
         if autoupdate_loaded then
@@ -24,6 +24,24 @@ if enable_autoupdate then
 end
 
 local se = require("samp.events")
+local memory = require "memory"
+local ini = require "inicfg"
+
+local actual = {
+	time = memory.getint8(0xB70153),
+	weather = memory.getint16(0xC81320)
+}
+
+local cfg = ini.load({
+	time = {
+		value = 12,
+		lock = false
+	},
+	weather = {
+		value = 1,
+		lock = false
+	}
+}, "DiClimate.ini")
 
 local skip = [[
 
@@ -122,7 +140,41 @@ local skip = [[
 Списанный бронежилет на 4 часа даст вашему персонажу +38 ед. защиты, +7 ед. к урону, +10 ед. к удаче, а также +50 макс. HP и +40 макс. брони.
 Найти склад можно с помощью /GPS - Разное - Склад списанных бронежилетов.
 [Информация] Продавай и покупай автомобильные номера и СИМ-карты в Лас Вентурасе! /GPS - Разное - Рынок автомобильных номеров и СИМ-карт.
+[Информация] {FFFFFF}Используйте курсор чтобы выбрать тип топлива и его кол-во
+[Информация] {FFFFFF}Вы можете заправить полный бак - нажав на стоимость топлива
 ]]
+
+--погода
+function se.onSetWeather(id)
+	actual.weather = id
+	if cfg.weather.lock then
+		return false
+	end
+end
+
+function se.onSetPlayerTime(hour, min)
+	actual.time = hour
+	if cfg.time.lock then
+		return false
+	end
+end
+
+function se.onSetWorldTime(hour)
+	actual.time = hour
+	if cfg.time.lock then
+		return false
+	end
+end
+
+function se.onSetInterior(id)
+	local result = isPlayerInWorld(id)
+	if cfg.time.lock then
+		setWorldTime(result and cfg.time.value or actual.time, true) 
+	end
+	if cfg.weather.lock then 
+		setWorldWeather(result and cfg.weather.value or actual.weather, true)
+	end
+end
 
 function main()
 	-- информативное сообщение, что скрипт работает
@@ -137,6 +189,78 @@ function main()
 	if autoupdate_loaded and enable_autoupdate and Update then
         pcall(Update.check, Update.json_url, Update.prefix, Update.url)
     end
+
+	--команды смены погоды
+	sampRegisterChatCommand("st", setWorldTime)
+	sampRegisterChatCommand("sw", setWorldWeather)
+	--регистры управления временем и погодой сервером ВКЛ/ВЫКЛ
+	sampRegisterChatCommand("bt", toggleFreezeTime)
+	sampRegisterChatCommand("bw", toggleFreezeWeather)
+	
+	wait(-1)
+end
+
+function setWorldTime(hour, no_save)
+	if tostring(hour):lower() == "off" then
+		hour = actual.time
+	end
+	hour = tonumber(hour)
+	if hour ~= nil and (hour >= 0 and hour <= 23) then
+		local bs = raknetNewBitStream()
+		raknetBitStreamWriteInt8(bs, hour)
+		raknetEmulRpcReceiveBitStream(94, bs)
+		raknetDeleteBitStream(bs)
+		if no_save == nil then
+			cfg.time.value = hour
+			ini.save(cfg, "DiClimate.ini")
+		end
+		return nil
+	end
+	sampAddChatMessage("Используйте: {EEEEEE}/st [0 - 23 или OFF]", 0xFFDD90)
+end
+
+function setWorldWeather(id, no_save)
+	if tostring(id):lower() == "off" then
+		id = actual.weather
+	end
+	id = tonumber(id)
+	if id ~= nil and (id >= 0 and id <= 45) then
+		local bs = raknetNewBitStream()
+		raknetBitStreamWriteInt8(bs, id)
+		raknetEmulRpcReceiveBitStream(152, bs)
+		raknetDeleteBitStream(bs)
+		if no_save == nil then
+			cfg.weather.value = id
+			ini.save(cfg, "DiClimate.ini")
+		end
+		return nil
+	end
+	sampAddChatMessage("Используйте: {EEEEEE}/sw [0 - 45 или OFF]", 0xFFDD90)
+end
+
+function toggleFreezeTime()
+	cfg.time.lock = not cfg.time.lock
+	if ini.save(cfg, "DiClimate.ini") then
+		local state = (cfg.time.lock and "не сможет" or "снова может")
+		sampAddChatMessage("Теперь сервер " .. state .. " изменять время!", 0xFFDD90)
+	end
+end
+
+function toggleFreezeWeather()
+	cfg.weather.lock = not cfg.weather.lock
+	if ini.save(cfg, "DiClimate.ini") then
+		local state = (cfg.weather.lock and "не сможет" or "снова может")
+		sampAddChatMessage("Теперь сервер " .. state .. " изменять погоду!", 0xFFDD90)
+	end
+end
+
+function isPlayerInWorld(interior_id)
+	local ip, port = sampGetCurrentServerAddress()
+	local address = ("%s:%s"):format(ip, port)
+	if address == "80.66.82.147:7777" then -- Vice City
+		return (interior_id == 20)
+	end
+	return (interior_id == 0)
 end
 
 function se.onShowDialog(id, style, title, button1, button2, text)
