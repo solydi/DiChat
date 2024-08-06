@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.8.6")
+script_version("1.8.7")
 
 local encoding = require 'encoding'
 
@@ -198,6 +198,20 @@ function main()
 	sampRegisterChatCommand("bw", toggleFreezeWeather)
 	
 	wait(-1)
+end
+
+-- отключение частич нагружающих буффер
+require('memory').fill(0x4A125D, 0x90, 8, true)
+writeMemory(0x539F00, 4, 0x0024C2, true)
+
+-- отключение билбордов и экрана на цб
+function onReceivePacket(id, bs)
+    if id == 220 then
+        raknetBitStreamIgnoreBits(bs, 8)
+        if raknetBitStreamReadInt8(bs) == 12 then
+            return false
+        end
+    end
 end
 
 function setWorldTime(hour, no_save)
