@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.8.9")
+script_version("1.9.0")
 
 local encoding = require 'encoding'
 
@@ -81,7 +81,7 @@ local skip = [[
 [Информация] {ffffff}Если Вы перезайдете в игру, то сможете подключиться сразу на Vice City сервер.
 [Подсказка] {ffffff}Поскольку вы владеете частным самолетом, можно вылететь моментальным рейсом.
 {DFCFCF}[Подсказка] {DC4747}Чтобы завести двигатель введите {DFCFCF}/engine{DC4747} или нажмите {DFCFCF}N
-{DFCFCF}[Подсказка] {DC4747}Чтобы открыть круговое меню для управления транспортом, нажмите {DFCFCF}R 
+Чтобы открыть круговое меню для управления транспортом
 {DFCFCF}[Подсказка] {DC4747}Чтобы включить радио используйте кнопку {DFCFCF}CTRL (/radio)
 {DFCFCF}[Подсказка] {DC4747}Для управления поворотниками используйте клавиши: {DFCFCF}(Q/E)
 [Vice City News] Вы можете отправить своё объявление. Используйте /ad, чтобы прорекламировать свои услуги или свой бизнес.
@@ -287,7 +287,7 @@ function se.onShowDialog(id, style, title, button1, button2, text)
 		return false
 	end
 	-- cкип диалога на рядом стоящих буквой R
-	if id == 26612 then
+	if id == 26611 then
 		sampSendDialogResponse(26611, 0)
 		return false
 	end
