@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.0")
+script_version("1.9.1")
 
 local encoding = require 'encoding'
 
@@ -145,6 +145,8 @@ local skip = [[
 {9ACD32}[Подсказка]{FFFFFF} Негде жить? Арендуйте номер в любом из отелей штата!
 {9ACD32}[Подсказка]{FFFFFF} Проживая в отеле, Вы получаете множество бонусов, которые упростят Вашу игру
 {9ACD32}[Подсказка]{FFFFFF} Подробнее: {9ACD32}/hotel
+[Battle Pass]{ffffff} Доступен только играя с лаунчера ARIZONA GAMES или ARIZONA MOBILE!
+[Подсказка] {ffffff}Вы можете отключить данную функцию в {ff6666}/settings - Настройки персонажа{ffffff}.
 ]]
 
 --погода
@@ -193,10 +195,10 @@ function main()
         pcall(Update.check, Update.json_url, Update.prefix, Update.url)
     end
 
-	--команды смены погоды
+	-- команды смены погоды
 	sampRegisterChatCommand("st", setWorldTime)
 	sampRegisterChatCommand("sw", setWorldWeather)
-	--регистры управления временем и погодой сервером ВКЛ/ВЫКЛ
+	-- регистры управления временем и погодой сервером ВКЛ/ВЫКЛ
 	sampRegisterChatCommand("bt", toggleFreezeTime)
 	sampRegisterChatCommand("bw", toggleFreezeWeather)
 	
@@ -281,98 +283,48 @@ function isPlayerInWorld(interior_id)
 end
 
 function se.onShowDialog(id, style, title, button1, button2, text)
-	-- скип диалога фамавто
-	if id == 26013 then
-		sampSendDialogResponse(26013, 0)
-		return false
-	end
-	-- cкип диалога на рядом стоящих буквой R
-	if id == 26611 then
-		sampSendDialogResponse(26611, 0)
-		return false
-	end
-	-- взять фамавто без хуйни
-	if id == 25194 then
-		sampSendDialogResponse(25194, 1)
-		return false
-	end
-	-- скип диалога загрузки провизии ДФТ фамквест
-	if text:find("Вы успешно загрузили машину провизией.") then
-        sampSendDialogResponse(id, 1, 0, false)
-        sampAddChatMessage("{73B461}[Информация] {ffffff}Вы успешно загрузили машину провизией.", -1)
-        return false
-    end
-	-- скип диалога разгрузки провизии ДФТ фамквест
-    if text:find("Вы успешно разгрузили машину с провизией.") then
-        sampSendDialogResponse(id, 1, 0, false)
-        sampAddChatMessage("{73B461}[Информация] {ffffff}Вы успешно разгрузили машину с провизией.", -1)
-        return false
-    end
-	-- скип диалога завершения разгрузок
-    if text:find("Вы успешно разгрузили нужное количество провизии для вашей семьи.") then
-        sampSendDialogResponse(id, 1, 0, false)
-        return false
-    end
-	-- скип получения мусорного предмета х4 с сундука
-	if text:find ("Удача! При использовании сундука с рулеткой") then
-		sampSendDialogResponse(id, 1, 0, false)
-		return false
-	end
-	-- скип выпадения х4 с платинового сундука
-	if text:find ("Удача! При использовании платинового сундука с рулеткой") then
-		sampSendDialogResponse(id, 1, 0, false)
-		return false
-	end
-	-- переодеться без хуйни
-	if id == 7551 then
-		sampSendDialogResponse(7551, 1)
-		return false
-	end
-	if id == 581 then
-		sampSendDialogResponse(581, 1)
-		return false
-	end
-	-- фамквесты без хуйни
-    if text:find("У меня всегда есть чем занять человека! В нашу семью нужно пополнять провизию, ибо нам не выжить.") then
-        sampSendDialogResponse(id, 1, 0, false)
-        sampAddChatMessage("{73B461}[Информация] {ffffff}Вы приняли семейный квест {ff7e14}'Перевозим провизию!'.", -1)
-        return false
-    end
-	if text:find("Отправляйся в Железный порт, его ты сможешь найти с помощью GPS.") then
-        sampSendDialogResponse(id, 1, 0, false)
-        sampAddChatMessage("{73B461}[Информация] {ffffff}Вы приняли семейный квест {ff7e14}'Тонна рыбы!'.", -1)
-        return false
-    end
-	if text:find("Нам срочно нужны люди которые будут заниматься охотой!.") then
-        sampSendDialogResponse(id, 1, 0, false)
-        sampAddChatMessage("{73B461}[Информация] {ffffff}Вы приняли семейный квест {ff7e14}'Охотимся!'.", -1)
-        return false
-    end
-	-- скип акции х4
-	if id == 15330 then
-		sampSendDialogResponse(15330, 0)
-		return false
-	end
-	-- квест центр гетто
-	if text:find("Йоу братишка, вижу ты часто гуляешь по нашим опасным улицам.") then
-        sampSendDialogResponse(id, 1, 0, false)
+    -- таблица диалогов
+    local dialogSkip = {
+        [26013] = 0, -- фамавто
+        [26611] = 0, -- рядом стоящие буквой R
+        [25194] = 1, -- фамавто без хуйни
+        [7551] = 1,  -- переодеться без хуйни
+        [581] = 1,   -- переодеться без хуйни
+        [15330] = 0, -- скип акции х4
+        [25191] = 1, -- ещё один диалог
+        [15531] = 1  -- оплата налогов с Metall Bank Card
+    }
+
+    -- проверка по id
+    if dialogSkip[id] ~= nil then
+        sampSendDialogResponse(id, dialogSkip[id])
         return false
     end
 
-	if id == 25191 then
-		sampSendDialogResponse(25191, 1)
-		return false
-	end
-	--х2 Vice City
-	if text:find ("Мы ради видеть вас на сервере Vice City. Сейчас на сервере проходит акция [FA5858]X2 PayDay") then
-		sampSendDialogResponse(id, 1, 0, false)
-		return false
-	end
-	-- скип диалога оплаты налогов с Metall Bank Card
-	if id == 15531 then
-		sampSendDialogResponse(15531, 1)
-		return false
-	end
+    -- тексты для скипа
+    local textSkip = {
+        ["Вы успешно загрузили машину провизией."] = "{73B461}[Информация] {ffffff}Вы успешно загрузили машину провизией.",
+        ["Вы успешно разгрузили машину с провизией."] = "{73B461}[Информация] {ffffff}Вы успешно разгрузили машину с провизией.",
+        ["Вы успешно разгрузили нужное количество провизии для вашей семьи."] = false,
+        ["Удача! При использовании сундука с рулеткой"] = false,
+        ["Удача! При использовании платинового сундука с рулеткой"] = false,
+        ["У меня всегда есть чем занять человека! В нашу семью нужно пополнять провизию, ибо нам не выжить."] = "{73B461}[Информация] {ffffff}Вы приняли семейный квест {ff7e14}'Перевозим провизию!'.",
+        ["Отправляйся в Железный порт, его ты сможешь найти с помощью GPS."] = "{73B461}[Информация] {ffffff}Вы приняли семейный квест {ff7e14}'Тонна рыбы!'.",
+        ["Нам срочно нужны люди которые будут заниматься охотой!."] = "{73B461}[Информация] {ffffff}Вы приняли семейный квест {ff7e14}'Охотимся!'.",
+        ["Йоу братишка, вижу ты часто гуляешь по нашим опасным улицам."] = false,
+        ["Мы рады видеть вас на сервере Vice City. Сейчас на сервере проходит акция [FA5858]X2 PayDay"] = false
+    }
+
+    -- проверка по тексту
+    for key, message in pairs(textSkip) do
+        if text:find(key) then
+            sampSendDialogResponse(id, 1, 0, false)
+            if message then
+                sampAddChatMessage(message, -1)
+            end
+            return false
+        end
+    end
 end
 
 function se.onServerMessage(color, text)
@@ -398,42 +350,29 @@ function se.onServerMessage(color, text)
 		return false
 	end
 
-    -- /ad без хуйни
-	if color == 0x73B461FF then
-		if string.find(text, "Отредактировал сотрудник") then
-			return false
-		end
-		-- offadd
-		if text:match("Объявление: .+%. .+_.+%(офф%)") then
-			local ad, sender = string.match(text, "Объявление: (.+)%. (.+_.+)%(офф%)")
-			sampAddChatMessage("{87b650}OFF AD: {ffeadb}" .. ad .. ".{ff9a76} " .. sender, -1)
-			return false
-		end
-		-- light
-		if text:match("Объявление: .+%. .+_.+%[.+] Тел%. .+") then
-			local ad, sender, tel = string.match(text, "Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)")
-			sampAddChatMessage("{87b650}AD: {ffeadb}" .. ad .. ".{ff9a76} T: " .. tel .. ". " .. sender, -1)
-			return false
-		end
-		-- dark
-		if text:match("Объявление: .+%. .+_.+%[.+] Тел%. .+") then
-			local ad, sender, tel = string.match(text, "Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)")
-			sampAddChatMessage("{87b650}AD: {ffeadb}" .. ad .. ".{ff9a76} T: " .. tel .. ". " .. sender, -1)
-			return false
-		end
-		-- ebobo
-		if text:match("Объявление: .+%. .+_.+ %[.+]%. Тел: .+") then
-			local ad, sender, tel = string.match(text, "Объявление: (.+)%. (.+_.+) %[.+]%. Тел: (.+)")
-			sampAddChatMessage("{87b650}AD: {ffeadb}" .. ad .. ".{ff9a76} T: " .. tel .. ". " .. sender, -1)
-			return false
-		end
-		-- vip
-		if text:match("%[VIP]Объявление: .+%. .+_.+%[.+] Тел%. .+") then
-			local ad, sender, tel = string.match(text, "%[VIP]Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)")
-			sampAddChatMessage("{FCAA4D}VIP AD: {ffeadb}" .. ad .. ".{ff9a76} T: " .. tel .. ". " .. sender, -1)
-			return false
-		end
-	end
+    -- /ad без лишнего
+    if color == 0x73B461FF then
+        if string.find(text, "Отредактировал сотрудник") then
+            return false
+        end
+
+        local patterns = {
+            {pattern = "Объявление: (.+)%. (.+_.+)%(офф%)", prefix = "{87b650}OFF AD: {ffeadb}", suffix = "{ff9a76} "},
+            {pattern = "Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
+            {pattern = "Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
+            {pattern = "Объявление: (.+)%. (.+_.+) %[.+]%. Тел: (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
+            {pattern = "%[VIP]Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{FCAA4D}VIP AD: {ffeadb}", suffix = "{ff9a76} T: "}
+        }
+
+        for _, p in ipairs(patterns) do
+            local ad, sender, tel = string.match(text, p.pattern)
+            if ad and sender then
+                local message = p.prefix .. ad .. "." .. p.suffix .. (tel and tel .. ". " or "") .. sender
+                sampAddChatMessage(message, -1)
+                return false
+            end
+        end
+    end
 
 	--поздравление с апом уровня в фаме
 	if text:find("{FF8400}%[Новости Семьи]{FFFFFF} Член семьи: .+_.+%[.+] достиг .+ уровня%. В семью начислен опыт%.") then
@@ -453,51 +392,33 @@ function se.onServerMessage(color, text)
 		  return text
     end
 
-	-- действия администрации
-	if string.find(text, " A:") then
-		if color == -10270721 then
-			return { 0xFFECA1FF, text }
-		elseif color == -2686721 then
-			return { 0xFF4040FF, text }
-		end
-	end
+    -- действия администрации
+    local adminKeywords = { " A:", "A:", "Администратор:", " Администратор:" }
+    for _, keyword in ipairs(adminKeywords) do
+        if string.find(text, keyword) then
+            if color == -10270721 then
+                return { 0xFFECA1FF, text }
+            elseif color == -2686721 then
+                return { 0xFF4040FF, text }
+            end
+        end
+    end
 
-	if string.find(text, "A:") then
-		if color == -10270721 then
-			return { 0xFFECA1FF, text }
-		elseif color == -2686721 then
-			return { 0xFF4040FF, text }
-		end
-	end
+    -- редкие призы из ларцов другим игрокам будут выделяться серым
+    if color == 0x31B404FF then
+        local patterns = {
+            "^[A-z0-9_]+ испытал удачу при",
+            "%[Удача] Игрок .+_.+ открыл Ящик с секретной машиной и получил: .+%.",
+            "Удача улыбнулась игроку .+_.+ при открытии '.+' и он выиграл предмет: .+"
+        }
 
-	if string.find(text, "Администратор:") then
-		if color == -10270721 then
-			return { 0xFFECA1FF, text }
-		elseif color == -2686721 then
-			return { 0xFF4040FF, text }
-		end
-	end
+        for _, pattern in ipairs(patterns) do
+            if string.find(text, pattern) then
+                return { 0xDDDDDDFF, text }
+            end
+        end
+    end
 
-	if string.find(text, " Администратор:") then
-		if color == -10270721 then
-			return { 0xFFECA1FF, text }
-		elseif color == -2686721 then
-			return { 0xFF4040FF, text }
-		end
-	end
-
-	-- редкие призы из ларцов другим игрокам будут выделятся серым
-	if color == 0x31B404FF and string.find(text, "^[A-z0-9_]+ испытал удачу при") then
-		return { 0xDDDDDDFF, text }
-	end
-
-	if color == 0x31B404FF and string.find(text, "%[Удача] Игрок .+_.+ открыл Ящик с секретной машиной и получил: .+%.") then
-		return { 0xDDDDDDFF, text }
-	end
-
-	if color == 0x31B404FF and string.find(text, "Удача улыбнулась игроку .+_.+ при открытии '.+' и он выиграл предмет: .+") then
-		return { 0xDDDDDDFF, text }
-	end
 
 	do -- замена цветов тегов /vr чата
 		local ad_tag = "^%[?Р?Е?К?Л?А?М?А?%]?%s?"
