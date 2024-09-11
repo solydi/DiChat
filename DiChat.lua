@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.1")
+script_version("1.9.2")
 
 local encoding = require 'encoding'
 
@@ -149,7 +149,7 @@ local skip = [[
 [Подсказка] {ffffff}Вы можете отключить данную функцию в {ff6666}/settings - Настройки персонажа{ffffff}.
 ]]
 
---погода
+-- погода
 function se.onSetWeather(id)
 	actual.weather = id
 	if cfg.weather.lock then
@@ -201,7 +201,7 @@ function main()
 	-- регистры управления временем и погодой сервером ВКЛ/ВЫКЛ
 	sampRegisterChatCommand("bt", toggleFreezeTime)
 	sampRegisterChatCommand("bw", toggleFreezeWeather)
-	
+
 	wait(-1)
 end
 
@@ -288,8 +288,8 @@ function se.onShowDialog(id, style, title, button1, button2, text)
         [26013] = 0, -- фамавто
         [26611] = 0, -- рядом стоящие буквой R
         [25194] = 1, -- фамавто без хуйни
-        [7551] = 1,  -- переодеться без хуйни
-        [581] = 1,   -- переодеться без хуйни
+        [7551] = 1,   -- переодеться без хуйни
+        [581] = 1,    -- переодеться без хуйни
         [15330] = 0, -- скип акции х4
         [25191] = 1, -- ещё один диалог
         [15531] = 1  -- оплата налогов с Metall Bank Card
@@ -364,6 +364,11 @@ function se.onServerMessage(color, text)
             {pattern = "%[VIP]Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{FCAA4D}VIP AD: {ffeadb}", suffix = "{ff9a76} T: "}
         }
 
+		-- скип объявлений ломбарда
+		if string.find(text, "Ломбард") or string.find(text, "ломбард") then
+    		return false
+		end
+
         for _, p in ipairs(patterns) do
             local ad, sender, tel = string.match(text, p.pattern)
             if ad and sender then
@@ -373,6 +378,11 @@ function se.onServerMessage(color, text)
             end
         end
     end
+
+	--скип рекламы ломбарда в VIP-чате
+	if string.find(text, "%[VIP ADV%]") and (string.find(text, "Ломбард") or string.find(text, "ломбард")) then
+    	return false
+	end
 
 	--поздравление с апом уровня в фаме
 	if text:find("{FF8400}%[Новости Семьи]{FFFFFF} Член семьи: .+_.+%[.+] достиг .+ уровня%. В семью начислен опыт%.") then
