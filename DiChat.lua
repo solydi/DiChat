@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.3")
+script_version("1.9.4")
 
 local encoding = require 'encoding'
 
@@ -311,9 +311,9 @@ function se.onShowDialog(id, style, title, button1, button2, text)
         ["Вы успешно разгрузили нужное количество провизии для вашей семьи."] = false,
         ["Удача! При использовании сундука с рулеткой"] = false,
         ["Удача! При использовании платинового сундука с рулеткой"] = false,
-        ["У меня всегда есть чем занять человека! В нашу семью нужно пополнять провизию, ибо нам не выжить."] = "{73B461}[Информация] {ffffff}Вы приняли семейный квест {ff7e14}'Перевозим провизию!'.",
-        ["Отправляйся в Железный порт, его ты сможешь найти с помощью GPS."] = "{73B461}[Информация] {ffffff}Вы приняли семейный квест {ff7e14}'Тонна рыбы!'.",
-        ["Нам срочно нужны люди которые будут заниматься охотой!."] = "{73B461}[Информация] {ffffff}Вы приняли семейный квест {ff7e14}'Охотимся!'.",
+        ["У меня всегда есть чем занять человека! В нашу семью нужно пополнять провизию, ибо нам не выжить."] = "{73B461}[Информация] {ffffff}Вы приняли семейный квест {ff7e14}'Перевозим провизию!'{ffffff}.",
+        ["Отправляйся в Железный порт, его ты сможешь найти с помощью GPS."] = "{73B461}[Информация] {ffffff}Вы приняли семейный квест {ff7e14}'Тонна рыбы!'{ffffff}.",
+        ["Нам срочно нужны люди которые будут заниматься охотой!."] = "{73B461}[Информация] {ffffff}Вы приняли семейный квест {ff7e14}'Охотимся!'{ffffff}.",
         ["Йоу братишка, вижу ты часто гуляешь по нашим опасным улицам."] = false,
         ["Мы рады видеть вас на сервере"] = false
     }
@@ -348,11 +348,6 @@ function se.onServerMessage(color, text)
 		return false
 	end
 
-    -- скип туберкулёзников
-	if string.find(text, "^[A-z0-9_]%[%d+%] очень громко кашлянул$") then
-		return false
-	end
-
     -- /ad без лишнего
     if color == 0x73B461FF then
         if string.find(text, "Отредактировал сотрудник") then
@@ -365,11 +360,10 @@ function se.onServerMessage(color, text)
             {pattern = "Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
             {pattern = "Объявление: (.+)%. (.+_.+) %[.+]%. Тел: (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
             {pattern = "%[VIP]Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{FCAA4D}VIP AD: {ffeadb}", suffix = "{ff9a76} T: "},
-			{pattern = "%[Реклама Бизнеса%] (.+)%.", prefix = "{FCAA4D}AD BIZ: {ffeadb}", suffix = "{ff9a76} "}
+			{pattern = "%[Реклама Бизнеса] (.+)%. Отправил: (.+_.+)%[.+]", prefix = "{FCAA4D}AD BIZ: {ffeadb}", suffix = "{ff9a76} "}
         }
-
 		-- скип объяввлений ломбарда
-		if string.find(text, "Ломбард") or string.find(text, "ломбард" or string.find(text, "Ломбрад") or string.find(text, "ломбрад")) then
+		if string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд") or string.find(text, "Ломбарь") or string.find(text, "ломбарь") then
     		return false
 		end
 
@@ -382,18 +376,19 @@ function se.onServerMessage(color, text)
             end
         end
     end
+
 	--скип рекламы ломбарда в VIP-чате
-	if string.find(text, "%[VIP ADV%]") and (string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад")) then
+	if string.find(text, "%[VIP ADV]") and (string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд")) then
     	return false
 	end
 
 	--ломбард ютубера
-	if string.find(text, "%[ADMIN%]") and (string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад")) then
+	if string.find(text, "%[ADMIN]") and (string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд")) then
     	return false
 	end
 
 	--поздравление с апом уровня в фаме
-	if text:find("{FF8400}%[Новости Семьи]{FFFFFF} Член семьи: .+_.+%[.+] достиг .+ уровня%. В семью начислен опыт%.") then
+	if text:find("%[Новости Семьи]{FFFFFF} Член семьи: .+_.+%[.+] достиг .+ уровня%. В семью начислен опыт%.") then
 		lua_thread.create(function()
 		  wait(1000)
 		  sampSendChat("/fam С днём рождения!")
@@ -414,11 +409,7 @@ function se.onServerMessage(color, text)
     local adminKeywords = { " A:", "A:", "Администратор:", " Администратор:" }
     for _, keyword in ipairs(adminKeywords) do
         if string.find(text, keyword) then
-            if color == -10270721 then
-                return { 0xFFECA1FF, text }
-            elseif color == -2686721 then
-                return { 0xFF4040FF, text }
-            end
+            return { 0xffe066FF, text }
         end
     end
 
@@ -427,7 +418,8 @@ function se.onServerMessage(color, text)
         local patterns = {
             "^[A-z0-9_]+ испытал удачу при",
             "%[Удача] Игрок .+_.+ открыл Ящик с секретной машиной и получил: .+%.",
-            "Удача улыбнулась игроку .+_.+ при открытии '.+' и он выиграл предмет: .+"
+            "Удача улыбнулась игроку .+_.+ при открытии '.+' и он выиграл предмет: .+",
+			"Удача улыбнулась игрок .+_.+ при обмене подарков и он выиграл - '.+'!"
         }
 
         for _, pattern in ipairs(patterns) do
@@ -437,22 +429,33 @@ function se.onServerMessage(color, text)
         end
     end
 
-
 	do -- замена цветов тегов /vr чата
-		local ad_tag = "^%[?Р?Е?К?Л?А?М?А?%]?%s?"
-		-- if ad_tag ~= "" then return false end -- Удаление рекламных сообщений /vr
-		if string.find(text, ad_tag .. "%[VIP%]") and color == 1687547391 then
-			return { 0x2FAA5BFF, text }
+		local ad_tag = "{fcaa4d}%[РЕКЛАМА]"
+		local old_tag = "%[VIP ADV]"
+
+		if string.find(text, old_tag) then
+			text = string.gsub(text, old_tag, ad_tag)
 		end
 
-		if string.find(text, ad_tag .. "%[PREMIUM%]") and color == -213517057 then
-			return { 0xFFAA00FF, text }
+		if string.find(text, ad_tag) then
+			return { 0xfcaa4dFF, text }
 		end
 
-		if string.find(text, ad_tag .. "%[ADMIN%]") and color == -54114817 then
-			return { 0xFF4040FF, text }
+		if string.find(text, "%[VIP]") then
+			return { 0xf7e980FF, text }
 		end
-	end
+        if string.find(text, "%[PREMIUM]") then
+            return { 0xfee001FF, text }
+        end
+
+        if string.find(text, "%[FOREVER]") then
+            return { 0xfebf00FF, text }
+        end
+
+        if string.find(text, "%[ADMIN]") then
+            return { 0xff033eFF, text }
+        end
+    end
 
 	do -- информативное сообщение о том что наложен мут
 		local sec = string.match(text, "^Вы заглушены. Оставшееся время заглушки (%d+) секунд")
