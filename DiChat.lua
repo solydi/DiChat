@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.4")
+script_version("1.9.5")
 
 local encoding = require 'encoding'
 
@@ -362,8 +362,8 @@ function se.onServerMessage(color, text)
             {pattern = "%[VIP]Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{FCAA4D}VIP AD: {ffeadb}", suffix = "{ff9a76} T: "},
 			{pattern = "%[Реклама Бизнеса] (.+)%. Отправил: (.+_.+)%[.+]", prefix = "{FCAA4D}AD BIZ: {ffeadb}", suffix = "{ff9a76} "}
         }
-		-- скип объяввлений ломбарда
-		if string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд") or string.find(text, "Ломбарь") or string.find(text, "ломбарь") then
+		-- скип объявлений ломбарда
+		if string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд") or string.find(text, "Ломбарь") or string.find(text, "ломбарь") or string.find(text, "Ломборд") or string.find(text, "ломборд") or string.find(text, "Ломбар") or string.find(text, "ломбар") then
     		return false
 		end
 
@@ -378,12 +378,12 @@ function se.onServerMessage(color, text)
     end
 
 	--скип рекламы ломбарда в VIP-чате
-	if string.find(text, "%[VIP ADV]") and (string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд")) then
+	if string.find(text, "%[VIP ADV]") and string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд") or string.find(text, "Ломбарь") or string.find(text, "ломбарь") or string.find(text, "Ломборд") or string.find(text, "ломборд") or string.find(text, "Ломбар") or string.find(text, "ломбар") then
     	return false
 	end
 
 	--ломбард ютубера
-	if string.find(text, "%[ADMIN]") and (string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд")) then
+	if string.find(text, "%[ADMIN]") and string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд") or string.find(text, "Ломбарь") or string.find(text, "ломбарь") or string.find(text, "Ломборд") or string.find(text, "ломборд") or string.find(text, "Ломбар") or string.find(text, "ломбар") then
     	return false
 	end
 
