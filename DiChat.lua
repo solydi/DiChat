@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.5")
+script_version("1.9.6")
 
 local encoding = require 'encoding'
 
@@ -147,6 +147,9 @@ local skip = [[
 {9ACD32}[Подсказка]{FFFFFF} Подробнее: {9ACD32}/hotel
 [Battle Pass]{ffffff} Доступен только играя с лаунчера ARIZONA GAMES или ARIZONA MOBILE!
 [Подсказка] {ffffff}Вы можете отключить данную функцию в {ff6666}/settings - Настройки персонажа{ffffff}.
+Центр обмена имущество
+Проводи безопасный обмен имуществом с другими игроками в специальном центре обмена имуществом
+(/GPS - Разное - Центр обмена имуществом)
 ]]
 
 --погода
@@ -286,7 +289,7 @@ function se.onShowDialog(id, style, title, button1, button2, text)
     -- таблица диалогов
     local dialogSkip = {
         [26013] = 0, -- фамавто
-        [26611] = 0, -- рядом стоящие буквой R
+        [26612] = 0, -- рядом стоящие буквой R
         [25194] = 1, -- фамавто без хуйни
         [7551] = 1,   -- переодеться без хуйни
         [581] = 1,    -- переодеться без хуйни
@@ -363,7 +366,7 @@ function se.onServerMessage(color, text)
 			{pattern = "%[Реклама Бизнеса] (.+)%. Отправил: (.+_.+)%[.+]", prefix = "{FCAA4D}AD BIZ: {ffeadb}", suffix = "{ff9a76} "}
         }
 		-- скип объявлений ломбарда
-		if string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд") or string.find(text, "Ломбарь") or string.find(text, "ломбарь") or string.find(text, "Ломборд") or string.find(text, "ломборд") or string.find(text, "Ломбар") or string.find(text, "ломбар") then
+		if string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд") or string.find(text, "Ломбарь") or string.find(text, "ломбарь") or string.find(text, "Ломборд") or string.find(text, "ломборд") or string.find(text, "Ломбар") or string.find(text, "ломбар") or string.find(text, "Лобмбард") or string.find(text, "лобмбард") then
     		return false
 		end
 
@@ -378,12 +381,12 @@ function se.onServerMessage(color, text)
     end
 
 	--скип рекламы ломбарда в VIP-чате
-	if string.find(text, "%[VIP ADV]") and string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд") or string.find(text, "Ломбарь") or string.find(text, "ломбарь") or string.find(text, "Ломборд") or string.find(text, "ломборд") or string.find(text, "Ломбар") or string.find(text, "ломбар") then
+	if string.find(text, "%[VIP ADV]") and string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд") or string.find(text, "Ломбарь") or string.find(text, "ломбарь") or string.find(text, "Ломборд") or string.find(text, "ломборд") or string.find(text, "Ломбар") or string.find(text, "ломбар") or string.find(text, "Лобмбард") or string.find(text, "лобмбард") then
     	return false
 	end
 
 	--ломбард ютубера
-	if string.find(text, "%[ADMIN]") and string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд") or string.find(text, "Ломбарь") or string.find(text, "ломбарь") or string.find(text, "Ломборд") or string.find(text, "ломборд") or string.find(text, "Ломбар") or string.find(text, "ломбар") then
+	if string.find(text, "%[ADMIN]") and string.find(text, "Ломбард") or string.find(text, "ломбард") or string.find(text, "Ломбрад") or string.find(text, "ломбрад") or string.find(text, "Ломабрд") or string.find(text, "ломабрд") or string.find(text, "Ломбарь") or string.find(text, "ломбарь") or string.find(text, "Ломборд") or string.find(text, "ломборд") or string.find(text, "Ломбар") or string.find(text, "ломбар") or string.find(text, "Лобмбард") or string.find(text, "лобмбард") then
     	return false
 	end
 
