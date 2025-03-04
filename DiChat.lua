@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.7")
+script_version("1.9.8")
 
 local encoding = require 'encoding'
 
@@ -296,8 +296,8 @@ function se.onShowDialog(id, style, title, button1, button2, text)
         [26013] = 0, -- фамавто
         [26612] = 0, -- рядом стоящие буквой R
         [25194] = 1, -- фамавто без хуйни
-        [7551] = 1,   -- переодеться без хуйни
-        [581] = 1,    -- переодеться без хуйни
+        --[7551] = 1,   -- переодеться без хуйни
+        --[581] = 1,    -- переодеться без хуйни
         [15330] = 0, -- скип акции х4
         [25191] = 1, -- ещё один диалог
         [15531] = 1,  -- оплата налогов с Metall Bank Card
@@ -398,19 +398,19 @@ function se.onServerMessage(color, text)
 	-- квест с оленями
 	local deerLeft = string.match(text, "%[Квест] Осталось застрелить оленей: (%d+) шт.")
 	if deerLeft then
-		return { 0x73B461FF, string.format("{73B461}[Информация] {ffffff}Осталось застрелить оленей: {00FFFF}%s {ffffff}шт.", deerLeft) }
+		return { 0x73B461FF, string.format("{73B461}[Информация] {ffffff}Осталось застрелить оленей: {FFA500}%s {ffffff}шт.", deerLeft) }
 	end
 
 	-- квест с действиями на ферме
 	local actionsLeft = string.match(text, "%[Квест] Осталось выполнить действий на ферме: (%d+)")
 	if actionsLeft then
-    	return { 0x31B404FF, string.format("{31B404}[Информация] {ffffff}Осталось выполнить действий на ферме: {00FFFF}%s {ffffff}шт.", actionsLeft) }
+    	return { 0x31B404FF, string.format("{31B404}[Информация] {ffffff}Осталось выполнить действий на ферме: {FFA500}%s {ffffff}шт.", actionsLeft) }
 	end
 
 	-- квест с развозкой
 	local jobLeft = string.match(text, "%[Квест] Вы успешно отвезли 1 заказ%(а%), для выполнения задания Вам осталось отвезти еще (%d+) заказ%(а%)%.")
 	if jobLeft then
-    	return { 0x73B461FF, string.format("{73B461}[Информация] {ffffff}Вы успешно отвезли 1 заказ, для выполнения задания Вам осталось отвезти еще {00FFFF}%s {ffffff}заказ(а).", jobLeft) }
+    	return { 0x73B461FF, string.format("{73B461}[Информация] {ffffff}Вы успешно отвезли 1 заказ, для выполнения задания Вам осталось отвезти еще {FFA500}%s {ffffff}заказ(а).", jobLeft) }
 	end
 
     -- скип эфиров от СМИ
@@ -429,10 +429,11 @@ function se.onServerMessage(color, text)
             return false
         end
 
-		local keywords = { 
-			"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд", 
-			"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд", 
-			"Ломбар", "ломбар", "Лобмбард", "лобмбард", "Лобмард", "лобмард" }
+		local keywords = {
+			"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд",
+			"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд",
+			"Ломбар", "ломбар", "Лобмбард", "лобмбард", "Лобмард",
+			"лобмард", "ЛОмбард", "Логмбард", "бар", "Бар" }
 
 		-- Проверка на наличие ключевых слов
 		for _, keyword in ipairs(keywords) do
@@ -446,7 +447,7 @@ function se.onServerMessage(color, text)
             {pattern = "Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
             {pattern = "Объявление: (.+)%. (.+_.+) %[.+]%. Тел: (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
             {pattern = "%[VIP]Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{FCAA4D}VIP AD: {ffeadb}", suffix = "{ff9a76} T: "},
-			{pattern = "%[Реклама Бизнеса] (.+)%. Отправил: (.+_.+)%[.+]", prefix = "{FCAA4D}AD BIZ: {ffeadb}", suffix = "{ff9a76} "}
+			{pattern = "%[Реклама Бизнеса] Объявление: (.+)%. Отправил: (.+_.+)%[.+]", prefix = "{FCAA4D}AD BIZ: {ffeadb}", suffix = "{ff9a76} "}
         }
 
 		for _, p in ipairs(patterns) do
@@ -505,9 +506,10 @@ function se.onServerMessage(color, text)
 		local ad_tag = "{fcaa4d}%[РЕКЛАМА]"
 		local old_tag = "%[VIP ADV]"
 		local keywords = { 
-			"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд", 
-			"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд", 
-			"Ломбар", "ломбар", "Лобмбард", "лобмбард", "Лобмард", "лобмард" }
+			"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд",
+			"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд",
+			"Ломбар", "ломбар", "Лобмбард", "лобмбард", "Лобмард",
+			"лобмард", "ЛОмбард", "Логмбард", "бар", "Бар" }
 
 		if string.find(text, old_tag) then
 			text = string.gsub(text, old_tag, ad_tag)
