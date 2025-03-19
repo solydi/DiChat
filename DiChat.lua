@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.8")
+script_version("1.9.9")
 
 local encoding = require 'encoding'
 
@@ -16,9 +16,9 @@ if enable_autoupdate then
     if updater_loaded then
         autoupdate_loaded, Update = pcall(Updater)
         if autoupdate_loaded then
-            Update.json_url = "https://raw.githubusercontent.com/TankerVScripte/DiChat/main/version.json?" .. tostring(os.clock())
+            Update.json_url = "https://raw.githubusercontent.com/solydi/DiChat_notags/main/version.json?" .. tostring(os.clock())
             Update.prefix = "[" .. string.upper(thisScript().name) .. "]: "
-            Update.url = "https://github.com/TankerVScripte/DiChat"
+            Update.url = "https://github.com/solydi/DiChat_notags"
         end
     end
 end
@@ -156,6 +156,7 @@ local skip = [[
 /GPS - По работе - База развозчиков продуктов
 [Подсказка] {FFFFFF}Добыча на земле, беги хватай!
 [Контейнеры] Не упустите возможность выиграть уникальные призы
+Вы закрыли GPS территорий, чтобы его снова открыть - нужно перезайти в фургон
 ]]
 
 -- погода
@@ -213,7 +214,7 @@ function main()
 	wait(-1)
 end
 
--- отключение частиц нагружающих буффер
+-- отключение частич нагружающих буффер
 require('memory').fill(0x4A125D, 0x90, 8, true)
 writeMemory(0x539F00, 4, 0x0024C2, true)
 
@@ -293,15 +294,17 @@ end
 function se.onShowDialog(id, style, title, button1, button2, text)
     -- таблица диалогов
     local dialogSkip = {
-        [26013] = 0, -- фамавто
+		[15220] = 1, -- скип фам грузовик
+		[25475] = 1, -- выбор авто
         [26612] = 0, -- рядом стоящие буквой R
         [25194] = 1, -- фамавто без хуйни
+		[15222] = 1, -- загруз фам территории
         --[7551] = 1,   -- переодеться без хуйни
         --[581] = 1,    -- переодеться без хуйни
         [15330] = 0, -- скип акции х4
         [25191] = 1, -- ещё один диалог
         [15531] = 1,  -- оплата налогов с Metall Bank Card
-		[26014] = 1, -- vc fam avto
+		[26016] = 1, -- vc fam avto
 		[25824] = 1 -- переодеться вс
     }
 
@@ -382,7 +385,10 @@ function se.onServerMessage(color, text)
 		["Осталось сделать рейсов: 1."] = "{73B461}[Информация] {ffffff}Осталось сделать рейсов: {00FFFF}1{ffffff}.",
 		["Для выполнения задания Вам нужно вновь загрузить машину бетоном возле карьера деревни Форт Карсон."] = false,
 		["Теперь вам нужно отвезти бетон к месту постройки новой шахты в городе Сан Фиерро и выгрузить его там."] = "{73B461}[Информация] {ffffff}Доставьте машину на стройку новой шахты в Сан Фиерро для выгрузки.", 
-		["Вы успешно отказались от квеста!"] = "{73B461}[Информация] {ffffff}Вы успешно отказались от квеста."
+		["Вы успешно отказались от квеста!"] = "{73B461}[Информация] {ffffff}Вы успешно отказались от квеста.",
+		["Метка установлена на территорию вашей семьи"] = "{73B461}[Информация] {ffffff}Метка установлена на вашу семейную территорию.",
+		["Метка установлена на склад возле ЖК/Дома вашей семьи"] = "{73B461}[Информация] {ffffff}Метка установлена на ЖК вашей семьи.",
+		["Сейчас ни на одной территории вашей семьи нет ресурсов, которые можно было бы забрать."] = "{73B461}[Информация] {ffffff}Больше не осталось территорий с ресурсами."
     }
 
 	for msg, chatMsg in pairs(messages) do
@@ -447,7 +453,7 @@ function se.onServerMessage(color, text)
             {pattern = "Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
             {pattern = "Объявление: (.+)%. (.+_.+) %[.+]%. Тел: (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
             {pattern = "%[VIP]Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{FCAA4D}VIP AD: {ffeadb}", suffix = "{ff9a76} T: "},
-			{pattern = "%[Реклама Бизнеса] Объявление: (.+)%. Отправил: (.+_.+)%[.+]", prefix = "{FCAA4D}AD BIZ: {ffeadb}", suffix = "{ff9a76} "}
+			{pattern = "%[Реклама Бизнеса] (.+)%. Отправил: (.+_.+)%[.+]", prefix = "{FCAA4D}AD BIZ: {ffeadb}", suffix = "{ff9a76} "}
         }
 
 		for _, p in ipairs(patterns) do
@@ -478,62 +484,21 @@ function se.onServerMessage(color, text)
 		  return text
     end
 
-    -- действия администрации
-    local adminKeywords = { " A:", "A:", "Администратор:", " Администратор:" }
-    for _, keyword in ipairs(adminKeywords) do
-        if string.find(text, keyword) then
-            return { 0xffe066FF, text }
-        end
-    end
-
-    -- редкие призы из ларцов другим игрокам будут выделяться серым
-    if color == 0x31B404FF then
-        local patterns = {
-            "^[A-z0-9_]+ испытал удачу при",
-            "%[Удача] Игрок .+_.+ открыл Ящик с секретной машиной и получил: .+%.",
-            "Удача улыбнулась игроку .+_.+ при открытии '.+' и он выиграл предмет: .+",
-			"Удача улыбнулась игрок .+_.+ при обмене подарков и он выиграл - '.+'!"
-        }
-
-        for _, pattern in ipairs(patterns) do
-            if string.find(text, pattern) then
-                return { 0xDDDDDDFF, text }
-            end
-        end
-    end
-
-	do -- замена цветов тегов /vr чата
-		local ad_tag = "{fcaa4d}%[РЕКЛАМА]"
-		local old_tag = "%[VIP ADV]"
-		local keywords = { 
+	do -- удаление рекламы ломбарда, бара
+		local keywords = {
 			"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд",
 			"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд",
 			"Ломбар", "ломбар", "Лобмбард", "лобмбард", "Лобмард",
 			"лобмард", "ЛОмбард", "Логмбард", "бар", "Бар" }
 
-		if string.find(text, old_tag) then
-			text = string.gsub(text, old_tag, ad_tag)
-		end
-
-		if string.find(text, ad_tag) then
+		if string.find(text, "%[VIP ADV]") then
 			for _, keyword in ipairs(keywords) do
 				if string.find(text, keyword) then
 					return false
 				end
 			end
-			return { 0xfcaa4dFF, text }
+			return { 0xff033eFF, text }
 		end
-
-		if string.find(text, "%[VIP]") then
-			return { 0xf7e980FF, text }
-		end
-        if string.find(text, "%[PREMIUM]") then
-            return { 0xfee001FF, text }
-        end
-
-        if string.find(text, "%[FOREVER]") then
-            return { 0xfebf00FF, text }
-        end
 
 		if string.find(text, "%[ADMIN]") then
 			for _, keyword in ipairs(keywords) do
