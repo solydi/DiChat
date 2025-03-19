@@ -16,9 +16,9 @@ if enable_autoupdate then
     if updater_loaded then
         autoupdate_loaded, Update = pcall(Updater)
         if autoupdate_loaded then
-            Update.json_url = "https://raw.githubusercontent.com/solydi/DiChat_notags/main/version.json?" .. tostring(os.clock())
+            Update.json_url = "https://raw.githubusercontent.com/TankerVScripte/DiChat/main/version.json?" .. tostring(os.clock())
             Update.prefix = "[" .. string.upper(thisScript().name) .. "]: "
-            Update.url = "https://github.com/solydi/DiChat_notags"
+            Update.url = "https://github.com/TankerVScripte/DiChat"
         end
     end
 end
@@ -214,7 +214,7 @@ function main()
 	wait(-1)
 end
 
--- отключение частич нагружающих буффер
+-- отключение частиц нагружающих буффер
 require('memory').fill(0x4A125D, 0x90, 8, true)
 writeMemory(0x539F00, 4, 0x0024C2, true)
 
@@ -453,7 +453,7 @@ function se.onServerMessage(color, text)
             {pattern = "Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
             {pattern = "Объявление: (.+)%. (.+_.+) %[.+]%. Тел: (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
             {pattern = "%[VIP]Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{FCAA4D}VIP AD: {ffeadb}", suffix = "{ff9a76} T: "},
-			{pattern = "%[Реклама Бизнеса] (.+)%. Отправил: (.+_.+)%[.+]", prefix = "{FCAA4D}AD BIZ: {ffeadb}", suffix = "{ff9a76} "}
+			{pattern = "%[Реклама Бизнеса] Объявление: (.+)%. Отправил: (.+_.+)%[.+]", prefix = "{FCAA4D}AD BIZ: {ffeadb}", suffix = "{ff9a76} "}
         }
 
 		for _, p in ipairs(patterns) do
@@ -484,21 +484,62 @@ function se.onServerMessage(color, text)
 		  return text
     end
 
-	do -- удаление рекламы ломбарда, бара
-		local keywords = {
+    -- действия администрации
+    local adminKeywords = { " A:", "A:", "Администратор:", " Администратор:" }
+    for _, keyword in ipairs(adminKeywords) do
+        if string.find(text, keyword) then
+            return { 0xffe066FF, text }
+        end
+    end
+
+    -- редкие призы из ларцов другим игрокам будут выделяться серым
+    if color == 0x31B404FF then
+        local patterns = {
+            "^[A-z0-9_]+ испытал удачу при",
+            "%[Удача] Игрок .+_.+ открыл Ящик с секретной машиной и получил: .+%.",
+            "Удача улыбнулась игроку .+_.+ при открытии '.+' и он выиграл предмет: .+",
+			"Удача улыбнулась игрок .+_.+ при обмене подарков и он выиграл - '.+'!"
+        }
+
+        for _, pattern in ipairs(patterns) do
+            if string.find(text, pattern) then
+                return { 0xDDDDDDFF, text }
+            end
+        end
+    end
+
+	do -- замена цветов тегов /vr чата
+		local ad_tag = "{fcaa4d}%[РЕКЛАМА]"
+		local old_tag = "%[VIP ADV]"
+		local keywords = { 
 			"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд",
 			"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд",
 			"Ломбар", "ломбар", "Лобмбард", "лобмбард", "Лобмард",
 			"лобмард", "ЛОмбард", "Логмбард", "бар", "Бар" }
 
-		if string.find(text, "%[VIP ADV]") then
+		if string.find(text, old_tag) then
+			text = string.gsub(text, old_tag, ad_tag)
+		end
+
+		if string.find(text, ad_tag) then
 			for _, keyword in ipairs(keywords) do
 				if string.find(text, keyword) then
 					return false
 				end
 			end
-			return { 0xff033eFF, text }
+			return { 0xfcaa4dFF, text }
 		end
+
+		if string.find(text, "%[VIP]") then
+			return { 0xf7e980FF, text }
+		end
+        if string.find(text, "%[PREMIUM]") then
+            return { 0xfee001FF, text }
+        end
+
+        if string.find(text, "%[FOREVER]") then
+            return { 0xfebf00FF, text }
+        end
 
 		if string.find(text, "%[ADMIN]") then
 			for _, keyword in ipairs(keywords) do
