@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.9")
+script_version("1.9.10")
 
 local encoding = require 'encoding'
 
@@ -304,7 +304,7 @@ function se.onShowDialog(id, style, title, button1, button2, text)
         [15330] = 0, -- скип акции х4
         [25191] = 1, -- ещё один диалог
         [15531] = 1,  -- оплата налогов с Metall Bank Card
-		[26016] = 1, -- vc fam avto
+		[26017] = 1, -- fam avto
 		[25824] = 1 -- переодеться вс
     }
 
