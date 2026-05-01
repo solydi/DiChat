@@ -16,9 +16,9 @@ if enable_autoupdate then
     if updater_loaded then
         autoupdate_loaded, Update = pcall(Updater)
         if autoupdate_loaded then
-            Update.json_url = "https://raw.githubusercontent.com/TankerVScripte/DiChat/main/version.json?" .. tostring(os.clock())
+            Update.json_url = "https://raw.githubusercontent.com/solydi/DiChat/main/version.json?" .. tostring(os.clock())
             Update.prefix = "[" .. string.upper(thisScript().name) .. "]: "
-            Update.url = "https://github.com/TankerVScripte/DiChat"
+            Update.url = "https://github.com/solydi/DiChat"
         end
     end
 end
