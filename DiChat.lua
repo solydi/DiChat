@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.12")
+script_version("1.9.13")
 
 local encoding = require 'encoding'
 
@@ -27,22 +27,6 @@ local se = require("samp.events")
 local memory = require "memory"
 local ini = require "inicfg"
 
-local actual = {
-	time = memory.getint8(0xB70153),
-	weather = memory.getint16(0xC81320)
-}
-
-local cfg = ini.load({
-	time = {
-		value = 12,
-		lock = false
-	},
-	weather = {
-		value = 1,
-		lock = false
-	}
-}, "DiClimate.ini")
-
 local skip = [[
 
 [Подсказка] {DC4747}На сервере есть инвентарь, используйте клавишу Y для работы с ним
@@ -59,9 +43,6 @@ local skip = [[
 - Пригласи друга и получи бонус в размере $300 000!
 - Пригласи друга и получи бонус в размере $1 000 000 + 4 случайных ларца!
 - Наш сайт: arizona-rp.com (Личный кабинет/Донат)
-[Аэропорт Лос Сантос] {ffffff}Уважаемые жители штата, открыта продажа билетов на рейс: Лос Сантос — Вайс Сити
-[Аэропорт Лос Сантос] {ffffff}Подробнее: {FF6666}/help — Перелёты в город Vice City
-[Аэропорт Вайс Сити] {ffffff}Уважаемые жители штата, открыта продажа билетов на рейс: Вайс Сити — Лос Сантос
 [Сервер Vice City] {ffffff}Внимание! На сервере Vice City действует акция
 [Подсказка] Вы можете купить складское помещение /gps - складские помещения
 Этот тип недвижимости будет навсегда закреплен за вами и за него не нужно платить
@@ -114,8 +95,7 @@ local skip = [[
 найти там 3 оленя и застрелить их. После вернуться к Серафиму за наградой!
 [Подсказка] {FFFFFF}Отправляйтесь в Железный порт, место отмечено на миникарте
 красным маркером. Необходимо продать в порт 1000 рыбы! После вернуться к Юджину!
-Этот транспорт принадлежит семье 'Dillinger', стоимость аренды: 0$ в 1 минуту (с банковского счёта)
-Этот транспорт принадлежит семье 'Mahone', стоимость аренды: 0$ в 1 минуту (с банковского счёта)
+Этот транспорт принадлежит семье
 ВАЖНО! Если Ваша семья проживает в Arizona Tower, то вертолет можно забрать на вертолетной площадке Arizona Tower на пикапе!
 [Подсказка] {FFFFFF}Используйте /house для управления домом.
 [Депозит] {ffffff}Внимание! В выходные дни комиссия на снятие денег с депозита понижена.
@@ -164,42 +144,16 @@ local skip = [[
 [Arizona Rent]
 [Подсказка] {ffffff}Воспользуйтесь криминальным кодексом через инвентарь (/сbook) для повышения во фракции.
 [РАСПРОДАЖА]
+[Хранилище предметов]
+Убив его, вы сможете получить деньги!
+Вы взяли транспорт
+[Аэропорт Лос Сантос]
+[Аэропорт Vice City]
+[Аэропорт Вайс Сити]
+[Item Market]
 ]]
 
--- погода
-function se.onSetWeather(id)
-	actual.weather = id
-	if cfg.weather.lock then
-		return false
-	end
-end
-
-function se.onSetPlayerTime(hour, min)
-	actual.time = hour
-	if cfg.time.lock then
-		return false
-	end
-end
-
-function se.onSetWorldTime(hour)
-	actual.time = hour
-	if cfg.time.lock then
-		return false
-	end
-end
-
-function se.onSetInterior(id)
-	local result = isPlayerInWorld(id)
-	if cfg.time.lock then
-		setWorldTime(result and cfg.time.value or actual.time, true) 
-	end
-	if cfg.weather.lock then 
-		setWorldWeather(result and cfg.weather.value or actual.weather, true)
-	end
-end
-
 function main()
-	-- информативное сообщение, что скрипт работает
     if not isSampLoaded() or not isSampfuncsLoaded() then return end
     while not isSampAvailable() do wait(0) end
 	sampAddChatMessage('{F48B8C}[INFO] {ffffff}Скрипт {ff7e14}"DiChat" {ffffff}готов к работе! Автор: {ff7e14}solodi {ffffff}| Версия: ' .. thisScript().version,-1)
@@ -211,13 +165,6 @@ function main()
 	if autoupdate_loaded and enable_autoupdate and Update then
         pcall(Update.check, Update.json_url, Update.prefix, Update.url)
     end
-
-	-- команды смены погоды
-	sampRegisterChatCommand("st", setWorldTime)
-	sampRegisterChatCommand("sw", setWorldWeather)
-	-- регистры управления временем и погодой сервером ВКЛ/ВЫКЛ
-	sampRegisterChatCommand("bt", toggleFreezeTime)
-	sampRegisterChatCommand("bw", toggleFreezeWeather)
 	wait(-1)
 end
 
@@ -235,88 +182,23 @@ function onReceivePacket(id, bs)
     end
 end
 
-function setWorldTime(hour, no_save)
-	if tostring(hour):lower() == "off" then
-		hour = actual.time
-	end
-	hour = tonumber(hour)
-	if hour ~= nil and (hour >= 0 and hour <= 23) then
-		local bs = raknetNewBitStream()
-		raknetBitStreamWriteInt8(bs, hour)
-		raknetEmulRpcReceiveBitStream(94, bs)
-		raknetDeleteBitStream(bs)
-		if no_save == nil then
-			cfg.time.value = hour
-			ini.save(cfg, "DiClimate.ini")
-		end
-		return nil
-	end
-	sampAddChatMessage("Используйте: {EEEEEE}/st [0 - 23 или OFF]", 0xFFDD90)
-end
-
-function setWorldWeather(id, no_save)
-	if tostring(id):lower() == "off" then
-		id = actual.weather
-	end
-	id = tonumber(id)
-	if id ~= nil and (id >= 0 and id <= 45) then
-		local bs = raknetNewBitStream()
-		raknetBitStreamWriteInt8(bs, id)
-		raknetEmulRpcReceiveBitStream(152, bs)
-		raknetDeleteBitStream(bs)
-		if no_save == nil then
-			cfg.weather.value = id
-			ini.save(cfg, "DiClimate.ini")
-		end
-		return nil
-	end
-	sampAddChatMessage("Используйте: {EEEEEE}/sw [0 - 45 или OFF]", 0xFFDD90)
-end
-
-function toggleFreezeTime()
-	cfg.time.lock = not cfg.time.lock
-	if ini.save(cfg, "DiClimate.ini") then
-		local state = (cfg.time.lock and "не сможет" or "снова может")
-		sampAddChatMessage("Теперь сервер " .. state .. " изменять время!", 0xFFDD90)
-	end
-end
-
-function toggleFreezeWeather()
-	cfg.weather.lock = not cfg.weather.lock
-	if ini.save(cfg, "DiClimate.ini") then
-		local state = (cfg.weather.lock and "не сможет" or "снова может")
-		sampAddChatMessage("Теперь сервер " .. state .. " изменять погоду!", 0xFFDD90)
-	end
-end
-
-function isPlayerInWorld(interior_id)
-	local ip, port = sampGetCurrentServerAddress()
-	local address = ("%s:%s"):format(ip, port)
-	if address == "80.66.82.147:7777" then -- Vice City
-		return (interior_id == 20)
-	end
-	return (interior_id == 0)
-end
-
 function se.onShowDialog(id, style, title, button1, button2, text)
-    -- таблица диалогов
     local dialogSkip = {
 		[15220] = 1, -- скип фам грузовик
 		[25475] = 1, -- выбор авто
-        [26612] = 0, -- рядом стоящие буквой R
-        [25194] = 1, -- фамавто без хуйни
+        [26014] = 1, -- фамавто без хуйни
+		[25194] = 1,
 		[15222] = 1, -- загруз фам территории
-        --[7551] = 1,   -- переодеться без хуйни
-        --[581] = 1,    -- переодеться без хуйни
         [15330] = 0, -- скип акции х4
         [25191] = 1, -- ещё один диалог
         [15531] = 1,
 		[26017] = 1,  -- оплата налогов с Metall Bank Card
 		[26018] = 1, -- fam avto
 		[25824] = 1, -- переодеться вс
+		[25253] = 1,
+		[25910] = 1
     }
 
-    -- проверка по id
     if dialogSkip[id] ~= nil then
         sampSendDialogResponse(id, dialogSkip[id])
         return false
@@ -344,7 +226,6 @@ function se.onShowDialog(id, style, title, button1, button2, text)
         ["Мы рады видеть вас на сервере"] = false,
     }
 
-    -- проверка по тексту
     for key, message in pairs(textSkip) do
         if text:find(key) then
             sampSendDialogResponse(id, 1, 0, false)
@@ -361,13 +242,13 @@ function se.onServerMessage(color, text)
         return false
     end
 
-	-- скип всякой хуйни ненужной
 	for line in string.gmatch(skip, "[^\n]+") do
 		if string.find(text, line, 1, true) then
 			return false
 		end
 	end
-	-- СЕМЕЙНЫЕ КВЕСТЫ
+
+	-- quest dialogs
 	local messages = {
 		["Для выполнения задания Вам нужно доставить груз на указанную точку."] = false,
 		["Вы успешно погрузили груз на автомобиль, сейчас Вам нужно отвезти его к указанному на миникарте месту."] = "{73B461}[Информация] {ffffff}Вы погрузили груз и должны доставить его к указанному месту на миникарте.",
@@ -411,90 +292,72 @@ function se.onServerMessage(color, text)
         end
     end
 
-	-- квест с оленями
+	-- trash
 	local deerLeft = string.match(text, "%[Квест] Осталось застрелить оленей: (%d+) шт.")
 	if deerLeft then
 		return { 0x73B461FF, string.format("{73B461}[Информация] {ffffff}Осталось застрелить оленей: {FFA500}%s {ffffff}шт.", deerLeft) }
 	end
 
-	-- квест с действиями на ферме
-	local actionsLeft = string.match(text, "%[Квест] Осталось выполнить действий на ферме: (%d+)")
-	if actionsLeft then
-    	return { 0x31B404FF, string.format("{31B404}[Информация] {ffffff}Осталось выполнить действий на ферме: {FFA500}%s {ffffff}шт.", actionsLeft) }
-	end
-
-	-- квест с развозкой
 	local jobLeft = string.match(text, "%[Квест] Вы успешно отвезли 1 заказ%(а%), для выполнения задания Вам осталось отвезти еще (%d+) заказ%(а%)%.")
 	if jobLeft then
     	return { 0x73B461FF, string.format("{73B461}[Информация] {ffffff}Вы успешно отвезли 1 заказ, для выполнения задания Вам осталось отвезти еще {FFA500}%s {ffffff}заказ(а).", jobLeft) }
 	end
 
-    -- скип эфиров от СМИ
     if color == 0x73B461FF and string.find(text, "^%[ News .. %]") then
 		return false
 	end
 
-	-- скип офф от ареста
 	if string.match(text, "> Игрок .+_.+%(.+%) вышел при попытке избежать ареста и был наказан!") then
 		return false
 	end
 
-    -- /ad без лишнего
-    if color == 0x73B461FF then
-        if string.find(text, "Отредактировал сотрудник") then
-            return false
-        end
-
-		local keywords = {
-			"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд",
-			"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд",
-			"Ломбар", "ломбар", "Лобмбард", "лобмбард", "Лобмард",
-			"лобмард", "ЛОмбард", "Логмбард", "бар", "Бар" }
-
-		-- Проверка на наличие ключевых слов
-		for _, keyword in ipairs(keywords) do
-			if string.find(text, keyword) then
-				return false
-			end
-		end
-
-        local patterns = {
-            {pattern = "Объявление: (.+)%. (.+_.+)%(офф%)", prefix = "{87b650}OFF AD: {ffeadb}", suffix = "{ff9a76} "},
-            {pattern = "Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
-            {pattern = "Объявление: (.+)%. (.+_.+) %[.+]%. Тел: (.+)", prefix = "{87b650}AD: {ffeadb}", suffix = "{ff9a76} T: "},
-            {pattern = "%[VIP]Объявление: (.+)%. (.+_.+)%[.+] Тел%. (.+)", prefix = "{FCAA4D}VIP AD: {ffeadb}", suffix = "{ff9a76} T: "},
-			{pattern = "%[Реклама Бизнеса] Объявление: (.+)%. Отправил: (.+_.+)%[.+]", prefix = "{FCAA4D}AD BIZ: {ffeadb}", suffix = "{ff9a76} "}
-        }
-
-		for _, p in ipairs(patterns) do
-			local ad, sender, tel = string.match(text, p.pattern)
-			if ad and sender then
-				local message = p.prefix .. ad .. "." .. p.suffix .. (tel and tel .. ". " or "") .. sender
-				sampAddChatMessage(message, -1)
-				return false
-			end
-		end
+	if string.match(text, "> Игрок .+%(.+%) вышел при попытке избежать ареста и был наказан!") then
+		return false
 	end
-	
-	--поздравление с апом уровня в фаме
-	if text:find("%[Новости Семьи]{FFFFFF} Член семьи: .+_.+%[.+] достиг .+ уровня%. В семью начислен опыт%.") then
-		lua_thread.create(function()
-		  wait(1000)
-		  sampSendChat("/fam С днём рождения!")
-		  end)
-		return text
-   end
-	
-   --приветствие в семье
-	if text:find("%[Семья %(Новости%)] .+_.+%[.+]:{B9C1B8} пригласил в семью нового члена: .+_.+%[.+]!") then
-        lua_thread.create(function()
-			wait(1000)
-			sampSendChat("/fam бобро пожаловать)")
-			end)
-		  return text
-    end
 
-    -- действия администрации
+	-- /ad
+    if color == 0xfcaa4dFF or 0x079c1cFF or 0x73b461ff then
+
+    	if string.find(text, "Отредактировал сотрудник СМИ") then
+            return false
+    	end
+
+    	local keywords = {
+      		"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд",
+      		"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд",
+      		"Ломбар", "ломбар", "Лобмбард", "лобмбард", "Лобмард",
+      		"лобмард", "ЛОмбард", "Логмбард", "бар", "Бар" }
+
+    	for _, keyword in ipairs(keywords) do
+          	if string.find(text, keyword, 1, true) then
+              	return false
+          	end
+      	end
+
+    	local patterns = {
+        	{pattern = "(.+)%. (.+_.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+        	{pattern = "(.+)%. (.+_.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+        	{pattern = "(.+)%. (.+_.+) %[(.+)%]%. Тел: (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+        	{pattern = "%((.+)%)%. (.+_.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+        	{pattern = "%%%[Реклама Бизнеса%] Объявление: (.+)%. Отправил: (.+_.+)%%%[.+%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+			-- nrp nick
+			{pattern = "(.+)%. (.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+			{pattern = "(.+)%. (.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+			{pattern = "(.+)%. (.+) %[(.+)%]%. Тел: (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+			{pattern = "%((.+)%)%. (.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+			{pattern = "%%%[Реклама Бизнеса%] Объявление: (.+)%. Отправил: (.+)%%%[.+%]", prefix = "{ffeadb}", suffix = "{ff9a76} "}
+    	}
+
+    	for _, p in ipairs(patterns) do
+      	local ad, sender, tel = string.match(text, p.pattern)
+      		if ad and sender then
+        		local message = p.prefix .. ad .. "." .. p.suffix .. (tel and tel .. ". " or "") .. sender
+        		sampAddChatMessage(message, -1)
+        		return false
+      		end
+    	end
+  	end
+
     local adminKeywords = { " A:", "A:", "Администратор:", " Администратор:" }
     for _, keyword in ipairs(adminKeywords) do
         if string.find(text, keyword) then
@@ -502,7 +365,6 @@ function se.onServerMessage(color, text)
         end
     end
 
-    -- редкие призы из ларцов другим игрокам будут выделяться серым
     if color == 0x31B404FF then
         local patterns = {
             "^[A-z0-9_]+ испытал удачу при",
@@ -523,20 +385,19 @@ function se.onServerMessage(color, text)
         end
     end
 
-	do -- замена цветов тегов /vr чата
-		local ad_tag = "{fcaa4d}%[РЕКЛАМА]"
-		local old_tag = "%[VIP ADV]"
+	do
+		local tag = "%[VIP ADV]"
 		local keywords = { 
 			"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд",
 			"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд",
 			"Ломбар", "ломбар", "Лобмбард", "лобмбард", "Лобмард",
 			"лобмард", "ЛОмбард", "Логмбард", "бар", "Бар" }
 
-		if string.find(text, old_tag) then
-			text = string.gsub(text, old_tag, ad_tag)
+		if string.find(text, tag) then
+			text = string.gsub(text, tag)
 		end
 
-		if string.find(text, ad_tag) then
+		if string.find(text, tag) then
 			for _, keyword in ipairs(keywords) do
 				if string.find(text, keyword) then
 					return false
@@ -544,29 +405,9 @@ function se.onServerMessage(color, text)
 			end
 			return { 0xfcaa4dFF, text }
 		end
-
-		if string.find(text, "%[VIP]") then
-			return { 0xf7e980FF, text }
-		end
-        if string.find(text, "%[PREMIUM]") then
-            return { 0xfee001FF, text }
-        end
-
-        if string.find(text, "%[FOREVER]") then
-            return { 0xfebf00FF, text }
-        end
-
-		if string.find(text, "%[ADMIN]") then
-			for _, keyword in ipairs(keywords) do
-				if string.find(text, keyword) then
-					return false
-				end
-			end
-			return { 0xff033eFF, text }
-		end
     end
 
-	do -- информативное сообщение о том что наложен мут
+	do
 		local sec = string.match(text, "^Вы заглушены. Оставшееся время заглушки (%d+) секунд")
 		if sec ~= nil then
 			local end_mute = os.time() + tonumber(sec)
@@ -583,7 +424,7 @@ function se.onServerMessage(color, text)
 		end
 	end
 
-	do -- окрашивание ников при разговоре в цвет клиста
+	do
 		local id, message = string.match(text, "^[A-z0-9_]+%[(%d+)%] говорит:{B7AFAF} (.+)")
 		if id ~= nil then
 			local clist = sampGetPlayerColor(tonumber(id))
@@ -592,7 +433,7 @@ function se.onServerMessage(color, text)
 		end
 	end
 
-	do -- OOC чат над головой (/b)
+	do
 		local id, message = string.match(text, "^%(%( .+%[(%d+)%]: {B7AFAF}(.+){FFFFFF} %)%)$")
 		id = tonumber(id)
 		if id ~= nil and select(1, sampGetCharHandleBySampPlayerId(id)) then
@@ -629,5 +470,4 @@ function join_argb(a, r, g, b)
     argb = bit.bor(argb, bit.lshift(r, 16))
     argb = bit.bor(argb, bit.lshift(a, 24))
     return argb
-
 end
