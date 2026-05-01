@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.13")
+script_version("1.9.14")
 
 local encoding = require 'encoding'
 
@@ -316,7 +316,7 @@ function se.onServerMessage(color, text)
 	end
 
 	-- /ad
-    if color == 0xfcaa4dFF or 0x079c1cFF or 0x73b461ff then
+    if color == 0xfcaa4dFF or color == 0x079c1cFF or color == 0x73b461ff then
 
     	if string.find(text, "Отредактировал сотрудник СМИ") then
             return false
