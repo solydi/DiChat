@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.14")
+script_version("1.9.15")
 
 local encoding = require 'encoding'
 
@@ -186,7 +186,7 @@ function se.onShowDialog(id, style, title, button1, button2, text)
     local dialogSkip = {
 		[15220] = 1, -- скип фам грузовик
 		[25475] = 1, -- выбор авто
-        [26014] = 1, -- фамавто без хуйни
+        [26015] = 1, -- фамавто без хуйни
 		[25194] = 1,
 		[15222] = 1, -- загруз фам территории
         [15330] = 0, -- скип акции х4
@@ -224,6 +224,7 @@ function se.onShowDialog(id, style, title, button1, button2, text)
         ["Йоу братишка, вижу ты часто гуляешь по нашим опасным улицам."] = false,
 		-- ОКНО ВХОДА НА VICE CITY
         ["Мы рады видеть вас на сервере"] = false,
+
     }
 
     for key, message in pairs(textSkip) do
@@ -315,73 +316,70 @@ function se.onServerMessage(color, text)
 		return false
 	end
 
+	if string.find(text, "от Аризоны БОТ", 1, true) then
+		return false
+	end
 	-- /ad
-    if color == 0xfcaa4dFF or color == 0x079c1cFF or color == 0x73b461ff then
+	do
+		if string.find(text, "Отредактировал сотрудник СМИ", 1, true) then
+			return false
+		end
 
-    	if string.find(text, "Отредактировал сотрудник СМИ") then
-            return false
-    	end
+		local isAdColor = (color == 0xfcaa4dFF or color == 0x079c1cFF or color == 0x73b461ff)
+		local isVipAdv  = string.find(text, "%[VIP ADV%]", 1, true) ~= nil
+						or string.find(text, "VIP ADV", 1, true) ~= nil
 
-    	local keywords = {
-      		"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд",
-      		"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд",
-      		"Ломбар", "ломбар", "Лобмбард", "лобмбард", "Лобмард",
-      		"лобмард", "ЛОмбард", "Логмбард", "бар", "Бар" }
+		local looksLikeAd = string.find(text, "Тел%.", 1, true)
+						or string.find(text, "Тел:", 1, true)
+						or string.find(text, "%(офф%)", 1, true)
 
-    	for _, keyword in ipairs(keywords) do
-          	if string.find(text, keyword, 1, true) then
-              	return false
-          	end
-      	end
+		if isAdColor or isVipAdv or looksLikeAd then
+			local keywords = {
+				"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд",
+				"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд",
+				"Ломбар", "ломбар", "Лобмбард", "лобмбард", "Лобмард",
+				"лобмард", "ЛОмбард", "Логмбард", "бар", "Бар"
+			}
 
-    	local patterns = {
-        	{pattern = "(.+)%. (.+_.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
-        	{pattern = "(.+)%. (.+_.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-        	{pattern = "(.+)%. (.+_.+) %[(.+)%]%. Тел: (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-        	{pattern = "%((.+)%)%. (.+_.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-        	{pattern = "%%%[Реклама Бизнеса%] Объявление: (.+)%. Отправил: (.+_.+)%%%[.+%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
-			-- nrp nick
-			{pattern = "(.+)%. (.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
-			{pattern = "(.+)%. (.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-			{pattern = "(.+)%. (.+) %[(.+)%]%. Тел: (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-			{pattern = "%((.+)%)%. (.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-			{pattern = "%%%[Реклама Бизнеса%] Объявление: (.+)%. Отправил: (.+)%%%[.+%]", prefix = "{ffeadb}", suffix = "{ff9a76} "}
-    	}
+			for _, keyword in ipairs(keywords) do
+				if string.find(text, keyword, 1, true) then
+					return false
+				end
+			end
 
-    	for _, p in ipairs(patterns) do
-      	local ad, sender, tel = string.match(text, p.pattern)
-      		if ad and sender then
-        		local message = p.prefix .. ad .. "." .. p.suffix .. (tel and tel .. ". " or "") .. sender
-        		sampAddChatMessage(message, -1)
-        		return false
-      		end
-    	end
-  	end
+			local patterns = {
+				{pattern = "(.+)%. (.+_.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+				{pattern = "(.+)%. (.+_.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "(.+)%. (.+_.+) %[(.+)%]%. Тел: (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "%((.+)%)%. (.+_.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "%%%[Реклама Бизнеса%] Объявление: (.+)%. Отправил: (.+_.+)%%%[.+%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+				-- nrp nick
+				{pattern = "(.+)%. (.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+				{pattern = "(.+)%. (.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "(.+)%. (.+) %[(.+)%]%. Тел: (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "%((.+)%)%. (.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "%%%[Реклама Бизнеса%] Объявление: (.+)%. Отправил: (.+)%%%[.+%]", prefix = "{ffeadb}", suffix = "{ff9a76} "}
+			}
 
-    local adminKeywords = { " A:", "A:", "Администратор:", " Администратор:" }
+			for _, p in ipairs(patterns) do
+				local ad, sender, tel = string.match(text, p.pattern)
+				if ad and sender then
+					local message = p.prefix .. ad .. "." .. p.suffix .. (tel and tel .. ". " or "") .. sender
+					sampAddChatMessage(message, -1)
+					return false
+				end
+			end
+
+			if isVipAdv then
+				return { 0xfcaa4dFF, text }
+			end
+		end
+	end
+
+    local adminKeywords = { " A:", "A:", "Администратор:", " Администратор:", "%[.+]Администратор:", "%[.+] Администратор:", "%[.+]А:", "%[.+]A:" }
     for _, keyword in ipairs(adminKeywords) do
         if string.find(text, keyword) then
             return { 0xffe066FF, text }
-        end
-    end
-
-    if color == 0x31B404FF then
-        local patterns = {
-            "^[A-z0-9_]+ испытал удачу при",
-			"Удача улыбнулась игроку .+_.+ при обмене подарков и он выиграл - .+!",
-			".+_.+ открыл Тайник Ведьмы и получил супер-приз: .+",
-			".+_.+ открыл Тайник Лича и получил супер-приз: .+",
-			".+_.+ открыл Тайник Медведя и получил супер-приз: .+",
-			"%[Удача] Игрок .+_.+ открыл Платиновый ящик с секретной машиной и получил: .+%.",
-            "%[Удача] Игрок .+_.+ открыл Ящик с секретной машиной и получил: .+%.",
-            "Удача улыбнулась игроку .+_.+ при открытии '.+' и он выиграл предмет: .+",
-			"Удача улыбнулась игрок .+_.+ при обмене подарков и он выиграл - '.+'!"
-        }
-
-        for _, pattern in ipairs(patterns) do
-            if string.find(text, pattern) then
-                return { 0xDDDDDDFF, text }
-            end
         end
     end
 
@@ -391,21 +389,21 @@ function se.onServerMessage(color, text)
 			"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд",
 			"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд",
 			"Ломбар", "ломбар", "Лобмбард", "лобмбард", "Лобмард",
-			"лобмард", "ЛОмбард", "Логмбард", "бар", "Бар" }
+			"лобмард", "ЛОмбард", "Логмбард", "бар", "Бар"
+		}
 
-		if string.find(text, tag) then
-			text = string.gsub(text, tag)
-		end
+		if string.find(text, tag, 1, true) then
+			text = string.gsub(text, tag, "")          -- remove the tag
 
-		if string.find(text, tag) then
 			for _, keyword in ipairs(keywords) do
-				if string.find(text, keyword) then
+				if string.find(text, keyword, 1, true) then
 					return false
 				end
 			end
+
 			return { 0xfcaa4dFF, text }
 		end
-    end
+	end
 
 	do
 		local sec = string.match(text, "^Вы заглушены. Оставшееся время заглушки (%d+) секунд")
