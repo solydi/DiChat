@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.15")
+script_version("1.9.16")
 
 local encoding = require 'encoding'
 
@@ -185,18 +185,17 @@ end
 function se.onShowDialog(id, style, title, button1, button2, text)
     local dialogSkip = {
 		[15220] = 1, -- скип фам грузовик
-		[25475] = 1, -- выбор авто
-        [26015] = 1, -- фамавто без хуйни
-		[25194] = 1,
-		[15222] = 1, -- загруз фам территории
+		[26007] = 1, -- фамавто без хуйни
+		[25193] = 1, -- фамавто без хуйни
+		[27820] = 1, -- типа если далеко встал от пикапа фамавто
         [15330] = 0, -- скип акции х4
-        [25191] = 1, -- ещё один диалог
         [15531] = 1,
 		[26017] = 1,  -- оплата налогов с Metall Bank Card
-		[26018] = 1, -- fam avto
+		[26018] = 1, -- fam avto vc
 		[25824] = 1, -- переодеться вс
 		[25253] = 1,
-		[25910] = 1
+		[25910] = 1,
+		[25190] = 1
     }
 
     if dialogSkip[id] ~= nil then
