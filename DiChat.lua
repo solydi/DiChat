@@ -365,24 +365,27 @@ function se.onServerMessage(color, text)
 			end
 
 			local patterns = {
-				-- с :call
+				-- РЕКЛАМА + Отправил + :call
 				{pattern = "РЕКЛАМА (.+)%. Отправил (.+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "(.+)%. Отправил (.+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "(.+)%. (.+)%[(%d+)%]%.? :call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "РЕКЛАМА (.+)%. Отправил (.+_%S+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+
+				-- РЕКЛАМА без "Отправил"
+				{pattern = "РЕКЛАМА (.+)%. (.+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "РЕКЛАМА (.+)%. (.+_%S+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+
+				-- Объявление:
+				{pattern = "Объявление: (.+)%. (.+)%[(%d+)%] Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "Объявление: (.+)%. (.+_%S+)%[(%d+)%] Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+
+				-- просто текст + ник + :call
+				{pattern = "(.+)%. (.+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "(.+)%. (.+_%S+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
 
 				-- с (офф)
 				{pattern = "РЕКЛАМА (.+)%. Отправил (.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+				{pattern = "РЕКЛАМА (.+)%. (.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
 				{pattern = "(.+)%. Отправил (.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
 				{pattern = "(.+)%. (.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
-
-				-- без номера и без (офф)
-				{pattern = "РЕКЛАМА (.+)%. Отправил (.+)%[(%d+)%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
-				{pattern = "(.+)%. Отправил (.+)%[(%d+)%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
-
-				{pattern = "Объявление: (.+)%. (.+)%[(%d+)%] Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "Объявление: (.+)%. (.+_%S+)%[(%d+)%] Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "Объявление: (.+)%. (.+)%[(%d+)%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
-				{pattern = "Объявление: (.+)%. (.+_%S+)%[(%d+)%]", prefix = "{ffeadb}", suffix = "{ff9a76} "}
 			}
 
 			for _, p in ipairs(patterns) do
