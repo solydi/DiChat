@@ -403,16 +403,16 @@ function se.onServerMessage(color, text)
 		end
 	end
 
-    local adminKeywords = { " A:", "A:", "Администратор:", " Администратор:", "%[.+]Администратор:", "%[.+] Администратор:", "%[.+]А:", "%[.+]A:" }
-    for _, keyword in ipairs(adminKeywords) do
-        if string.find(text, keyword) then
-            return { 0xffe066FF, text }
-        end
-    end
-
 	if string.find(text, "Администратор .+%[.+%] отправил игрока .+%[.+%] в ТСР по причине") 
-	or string.find(text, "^Мера наказания: .+ заданий?/.+ Минут!") then
+	or string.find(text, "Мера наказания:", 1, true) then
 		return { 0xffe066FF, text }
+	end
+
+	local adminKeywords = { " A:", "A:", "Администратор:", " Администратор:", "%[.+]Администратор:", "%[.+] Администратор:", "%[.+]А:", "%[.+]A:" }
+	for _, keyword in ipairs(adminKeywords) do
+		if string.find(text, keyword) then
+			return { 0xffe066FF, text }
+		end
 	end
 
 	do
