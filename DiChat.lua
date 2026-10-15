@@ -344,6 +344,7 @@ function se.onServerMessage(color, text)
 						or string.find(text, "VIP ADV", 1, true) ~= nil
 
 		local looksLikeAd = string.find(text, "РЕКЛАМА", 1, true)
+						or string.find(text, "Объявление:", 1, true)
 						or string.find(text, "Отправил", 1, true)
 						or string.find(text, ":call", 1, true)
 						or string.find(text, "Тел", 1, true)
@@ -377,6 +378,11 @@ function se.onServerMessage(color, text)
 				-- без номера и без (офф)
 				{pattern = "РЕКЛАМА (.+)%. Отправил (.+)%[(%d+)%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
 				{pattern = "(.+)%. Отправил (.+)%[(%d+)%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+
+				{pattern = "Объявление: (.+)%. (.+)%[(%d+)%] Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "Объявление: (.+)%. (.+_%S+)%[(%d+)%] Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "Объявление: (.+)%. (.+)%[(%d+)%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+				{pattern = "Объявление: (.+)%. (.+_%S+)%[(%d+)%]", prefix = "{ffeadb}", suffix = "{ff9a76} "}
 			}
 
 			for _, p in ipairs(patterns) do
