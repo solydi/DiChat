@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.16")
+script_version("1.9.17")
 
 local encoding = require 'encoding'
 
@@ -12,7 +12,7 @@ local enable_autoupdate = true -- false to disable auto-update
 local autoupdate_loaded = false
 local Update = nil
 if enable_autoupdate then
-    local updater_loaded, Updater = pcall(loadstring, [[return {check=function (a,b,c) local d=require('moonloader').download_status;local e=os.tmpname()local f=os.clock()if doesFileExist(e)then os.remove(e)end;downloadUrlToFile(a,e,function(g,h,i,j)if h==d.STATUSEX_ENDDOWNLOAD then if doesFileExist(e)then local k=io.open(e,'r')if k then local l=decodeJson(k:read('*a'))updatelink=l.updateurl;updateversion=l.latest;k:close()os.remove(e)if updateversion~=thisScript().version then lua_thread.create(function(b)local d=require('moonloader').download_status;local m=-1;sampAddChatMessage(b..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion,m)wait(250)downloadUrlToFile(updatelink,thisScript().path,function(n,o,p,q)if o==d.STATUS_DOWNLOADINGDATA then print(string.format('Загружено %d из %d.',p,q))elseif o==d.STATUS_ENDDOWNLOADDATA then print('Загрузка обновления завершена.')sampAddChatMessage(b..'Обновление завершено!',m)goupdatestatus=true;lua_thread.create(function()wait(500)thisScript():reload()end)end;if o==d.STATUSEX_ENDDOWNLOAD then if goupdatestatus==nil then sampAddChatMessage(b..'Обновление прошло неудачно. Запускаю устаревшую версию..',m)update=false end end end)end,b)else update=false;print('v'..thisScript().version..': Обновление не требуется!')if l.telemetry then local r=require"ffi"r.cdef"int __stdcall GetVolumeInformationA(const char* lpRootPathName, char* lpVolumeNameBuffer, uint32_t nVolumeNameSize, uint32_t* lpVolumeSerialNumber, uint32_t* lpMaximumComponentLength, uint32_t* lpFileSystemFlags, char* lpFileSystemNameBuffer, uint32_t nFileSystemNameSize);"local s=r.new("unsigned long[1]",0)r.C.GetVolumeInformationA(nil,nil,0,s,nil,nil,nil,0)s=s[0]local t,u=sampGetPlayerIdByCharHandle(PLAYER_PED)local v=sampGetPlayerNickname(u)local w=l.telemetry.."?id="..s.."&n="..v.."&i="..sampGetCurrentServerAddress().."&v="..getMoonloaderVersion().."&sv="..thisScript().version.."&uptime="..tostring(os.clock())lua_thread.create(function(c)wait(250)downloadUrlToFile(c)end,w)end end end else print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..c)update=false end end end)while update~=false and os.clock()-f<10 do wait(100)end;if os.clock()-f>=10 then print('v'..thisScript().version..': timeout, выходим из ожидания проверки обновления. Смиритесь или проверьте самостоятельно на '..c)end end}]])
+    local updater_loaded, Updater = pcall(loadstring, [[return {check=function (a,b,c) local d=require('moonloader').download_status;local e=os.tmpname()local f=os.clock()if doesFileExist(e)then os.remove(e)end;downloadUrlToFile(a,e,function(g,h,i,j)if h==d.STATUSEX_ENDDOWNLOAD then if doesFileExist(e)then local k=io.open(e,'r')if k then local l=decodeJson(k:read('*a'))updatelink=l.updateurl;updateversion=l.latest;k:close()os.remove(e)if updateversion~=thisScript().version then lua_thread.create(function(b)local d=require('moonloader').download_status;local m=-1;sampAddChatMessage(b..':u1f7e7: Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion,m)wait(250)downloadUrlToFile(updatelink,thisScript().path,function(n,o,p,q)if o==d.STATUS_DOWNLOADINGDATA then print(string.format('Загружено %d из %d.',p,q))elseif o==d.STATUS_ENDDOWNLOADDATA then print(':u1f7e9: Загрузка обновления завершена.')sampAddChatMessage(b..':u1f7e9: Обновление завершено!',m)goupdatestatus=true;lua_thread.create(function()wait(500)thisScript():reload()end)end;if o==d.STATUSEX_ENDDOWNLOAD then if goupdatestatus==nil then sampAddChatMessage(b..':u1f7e5: Обновление прошло неудачно. Запускаю устаревшую версию..',m)update=false end end end)end,b)else update=false;print('v'..thisScript().version..': Обновление не требуется!')if l.telemetry then local r=require"ffi"r.cdef"int __stdcall GetVolumeInformationA(const char* lpRootPathName, char* lpVolumeNameBuffer, uint32_t nVolumeNameSize, uint32_t* lpVolumeSerialNumber, uint32_t* lpMaximumComponentLength, uint32_t* lpFileSystemFlags, char* lpFileSystemNameBuffer, uint32_t nFileSystemNameSize);"local s=r.new("unsigned long[1]",0)r.C.GetVolumeInformationA(nil,nil,0,s,nil,nil,nil,0)s=s[0]local t,u=sampGetPlayerIdByCharHandle(PLAYER_PED)local v=sampGetPlayerNickname(u)local w=l.telemetry.."?id="..s.."&n="..v.."&i="..sampGetCurrentServerAddress().."&v="..getMoonloaderVersion().."&sv="..thisScript().version.."&uptime="..tostring(os.clock())lua_thread.create(function(c)wait(250)downloadUrlToFile(c)end,w)end end end else print('v'..thisScript().version..': :u1f7e6: Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..c)update=false end end end)while update~=false and os.clock()-f<10 do wait(100)end;if os.clock()-f>=10 then print('v'..thisScript().version..': timeout, выходим из ожидания проверки обновления. Смиритесь или проверьте самостоятельно на '..c)end end}]])
     if updater_loaded then
         autoupdate_loaded, Update = pcall(Updater)
         if autoupdate_loaded then
@@ -28,7 +28,6 @@ local memory = require "memory"
 local ini = require "inicfg"
 
 local skip = [[
-
 [Подсказка] {DC4747}На сервере есть инвентарь, используйте клавишу Y для работы с ним
 [Подсказка] {DC4747}Вы можете задать вопрос в нашу техническую поддержку /report
 В нашем магазине ты можешь приобрести нужное количество игровых денег и потратить
@@ -151,12 +150,20 @@ local skip = [[
 [Аэропорт Vice City]
 [Аэропорт Вайс Сити]
 [Item Market]
+[Подсказка] Вы успешно съели энергетический батончик!
+[Информация] Будьте осторожны, на территории штата бушует торнадо! Советуем обходить его стороной иначе Вас ждет катастрофа!
+[Cобиратели]
+[Ферма укропа]
+[Лотерейная]
+:u1f7e8: Пора покупаться.
+Будьте осторожны, на территории штата бушует торнадо! Советуем обходить его стороной иначе Вас ждет катастрофа!
+
 ]]
 
 function main()
     if not isSampLoaded() or not isSampfuncsLoaded() then return end
     while not isSampAvailable() do wait(0) end
-	sampAddChatMessage('{F48B8C}[INFO] {ffffff}Скрипт {ff7e14}"DiChat" {ffffff}готов к работе! Автор: {ff7e14}solodi {ffffff}| Версия: ' .. thisScript().version,-1)
+	sampAddChatMessage(':u1f7e9: {ffffff}Скрипт {ff7e14}"DiChat" {ffffff}готов к работе! Автор: {ff7e14}solodi {ffffff}| Версия: ' .. thisScript().version,-1)
 
 	while not isSampAvailable() do
         wait(100)
@@ -192,7 +199,6 @@ function se.onShowDialog(id, style, title, button1, button2, text)
         [15531] = 1,
 		[26017] = 1,  -- оплата налогов с Metall Bank Card
 		[26018] = 1, -- fam avto vc
-		[25824] = 1, -- переодеться вс
 		[25253] = 1,
 		[25910] = 1,
 		[25190] = 1
@@ -242,6 +248,14 @@ function se.onServerMessage(color, text)
         return false
     end
 
+	if string.find(text, "закрасил граффити", 1, true) and string.find(text, "КАПТА", 1, true) then
+		return false
+	end
+
+	if string.find(text, "На данной территории", 1, true) and string.find(text, "не закрашенных граффити нашей", 1, true) then
+		return false
+	end
+
 	for line in string.gmatch(skip, "[^\n]+") do
 		if string.find(text, line, 1, true) then
 			return false
@@ -263,9 +277,6 @@ function se.onServerMessage(color, text)
 		["Для выполнения задания вам нужно устроиться на работу развозчиком продуктов и выполнить 3 любых заказа."] = "{73B461}[Информация] {ffffff}Чтобы выполнить задание, устройтесь развозчиком продуктов и выполните 3 любых заказа.",
 		["Для выполнения задания Вам нужно устроиться на работу машиниста поезда и выполнить 3 рейса!"] = "{73B461}[Информация] {ffffff}Для выполнения задания устройтесь машинистом поезда и выполните 3 рейса.",
 		["Для выполнения задания Вам нужно устроиться на работу водителя автобуса и проехать 300 чекпоинтов на любом маршруте."] = "{73B461}[Информация] {ffffff}Чтобы выполнить задание, устройтесь водителем автобуса и пройдите 300 чекпоинтов на любом маршруте.",
-		-- ГОЛОДНАЯ ПОРА
-		-- КОНФИСКАТ
-		-- В РАЗРАБОТКЕ
 		["Для выполнения задания Вам нужно подойди к пикапу и взять специальную машину на парковке возле ЖК."] = false,
 		["Местоположение пикапа отмечено на миникарте."] = "{73B461}[Информация] {ffffff}Подойдите к пикапу (отмечен на миникарте) и возьмите специальную машину на парковке возле ЖК.",
 		["Для выполнения задания вам нужно загрузить машину бетоном возле карьера деревни Форт Карсон."] = "{73B461}[Информация] {ffffff}Загрузите машину бетоном возле карьера в деревне Форт Карсон (местоположение отмечено на миникарте).",
@@ -292,7 +303,6 @@ function se.onServerMessage(color, text)
         end
     end
 
-	-- trash
 	local deerLeft = string.match(text, "%[Квест] Осталось застрелить оленей: (%d+) шт.")
 	if deerLeft then
 		return { 0x73B461FF, string.format("{73B461}[Информация] {ffffff}Осталось застрелить оленей: {FFA500}%s {ffffff}шт.", deerLeft) }
@@ -307,6 +317,10 @@ function se.onServerMessage(color, text)
 		return false
 	end
 
+	if string.match(text, "На данной территории осталось %d+ не закрашенных граффити нашей Бандой!") then
+		return false
+	end
+
 	if string.match(text, "> Игрок .+_.+%(.+%) вышел при попытке избежать ареста и был наказан!") then
 		return false
 	end
@@ -318,6 +332,7 @@ function se.onServerMessage(color, text)
 	if string.find(text, "от Аризоны БОТ", 1, true) then
 		return false
 	end
+
 	-- /ad
 	do
 		if string.find(text, "Отредактировал сотрудник СМИ", 1, true) then
@@ -328,8 +343,10 @@ function se.onServerMessage(color, text)
 		local isVipAdv  = string.find(text, "%[VIP ADV%]", 1, true) ~= nil
 						or string.find(text, "VIP ADV", 1, true) ~= nil
 
-		local looksLikeAd = string.find(text, "Тел%.", 1, true)
-						or string.find(text, "Тел:", 1, true)
+		local looksLikeAd = string.find(text, "РЕКЛАМА", 1, true)
+						or string.find(text, "Отправил", 1, true)
+						or string.find(text, ":call", 1, true)
+						or string.find(text, "Тел", 1, true)
 						or string.find(text, "%(офф%)", 1, true)
 
 		if isAdColor or isVipAdv or looksLikeAd then
@@ -347,21 +364,21 @@ function se.onServerMessage(color, text)
 			end
 
 			local patterns = {
-				{pattern = "(.+)%. (.+_.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
-				{pattern = "(.+)%. (.+_.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "(.+)%. (.+_.+) %[(.+)%]%. Тел: (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "%((.+)%)%. (.+_.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "%%%[Реклама Бизнеса%] Объявление: (.+)%. Отправил: (.+_.+)%%%[.+%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
-				-- nrp nick
-				{pattern = "(.+)%. (.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
-				{pattern = "(.+)%. (.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "(.+)%. (.+) %[(.+)%]%. Тел: (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "%((.+)%)%. (.+)%[(.+)%] Тел%. (.+)", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "%%%[Реклама Бизнеса%] Объявление: (.+)%. Отправил: (.+)%%%[.+%]", prefix = "{ffeadb}", suffix = "{ff9a76} "}
+				{pattern = "РЕКЛАМА (.+)%. Отправил (.+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "РЕКЛАМА (.+)%. Отправил (.+_%S+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+
+				{pattern = "(.+)%. Отправил (.+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "(.+)%. Отправил (.+_%S+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+
+				{pattern = "(.+)%. (.+)%[(%d+)%]%.? :call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+				{pattern = "(.+)%. (.+_%S+)%[(%d+)%]%.? :call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
+
+				{pattern = "РЕКЛАМА (.+)%. Отправил (.+)%[(%d+)%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+				{pattern = "(.+)%. Отправил (.+)%[(%d+)%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
 			}
 
 			for _, p in ipairs(patterns) do
-				local ad, sender, tel = string.match(text, p.pattern)
+				local ad, sender, id, tel = string.match(text, p.pattern)
 				if ad and sender then
 					local message = p.prefix .. ad .. "." .. p.suffix .. (tel and tel .. ". " or "") .. sender
 					sampAddChatMessage(message, -1)
@@ -382,8 +399,13 @@ function se.onServerMessage(color, text)
         end
     end
 
+	if string.find(text, "Администратор .+%[.+%] отправил игрока .+%[.+%] в ТСР по причине") 
+	or string.find(text, "^Мера наказания: .+ заданий?/.+ Минут!") then
+		return { 0xffe066FF, text }
+	end
+
 	do
-		local tag = "%[VIP ADV]"
+		local tags = { "%[VIP ADV]", "%[ADMIN]" }
 		local keywords = { 
 			"Ломбард", "ломбард", "Ломбрад", "ломбрад", "Ломабрд",
 			"ломабрд", "Ломбарь", "ломбарь", "Ломборд", "ломборд",
@@ -391,16 +413,25 @@ function se.onServerMessage(color, text)
 			"лобмард", "ЛОмбард", "Логмбард", "бар", "Бар"
 		}
 
-		if string.find(text, tag, 1, true) then
-			text = string.gsub(text, tag, "")          -- remove the tag
-
-			for _, keyword in ipairs(keywords) do
-				if string.find(text, keyword, 1, true) then
-					return false
-				end
+		local lombardTags = { ":uf237:", ":uf238:", ":uf239:", ":uf23a:", ":uf235:" }
+		for _, tag in ipairs(lombardTags) do
+			if string.find(text, tag, 1, true) then
+				return false
 			end
+		end
 
-			return { 0xfcaa4dFF, text }
+		for _, tag in ipairs(tags) do
+			if string.find(text, tag, 1, true) then
+				text = string.gsub(text, tag, "")
+
+				for _, keyword in ipairs(keywords) do
+					if string.find(text, keyword, 1, true) then
+						return false
+					end
+				end
+
+				return { 0xfcaa4dFF, text }
+			end
 		end
 	end
 
