@@ -403,8 +403,11 @@ function se.onServerMessage(color, text)
 		end
 	end
 
-	if string.find(text, "Администратор .+%[.+%] отправил игрока .+%[.+%] в ТСР по причине") 
-	or string.find(text, "Мера наказания:", 1, true) then
+	if string.find(text, "отправил игрока", 1, true) and string.find(text, "в ТСР по причине", 1, true) then
+		return { 0xffe066FF, text }
+	end
+
+	if string.find(text, "Мера наказания:", 1, true) then
 		return { 0xffe066FF, text }
 	end
 
