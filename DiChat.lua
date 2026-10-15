@@ -364,15 +364,17 @@ function se.onServerMessage(color, text)
 			end
 
 			local patterns = {
+				-- с :call
 				{pattern = "РЕКЛАМА (.+)%. Отправил (.+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "РЕКЛАМА (.+)%. Отправил (.+_%S+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-
 				{pattern = "(.+)%. Отправил (.+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "(.+)%. Отправил (.+_%S+)%[(%d+)%]%.? Тел%.? ?:? ?:call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-
 				{pattern = "(.+)%. (.+)%[(%d+)%]%.? :call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
-				{pattern = "(.+)%. (.+_%S+)%[(%d+)%]%.? :call(%d+):", prefix = "{ffeadb}", suffix = "{ff9a76} T: "},
 
+				-- с (офф)
+				{pattern = "РЕКЛАМА (.+)%. Отправил (.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+				{pattern = "(.+)%. Отправил (.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+				{pattern = "(.+)%. (.+)%(офф%)", prefix = "{ffeadb}", suffix = "{ff9a76} "},
+
+				-- без номера и без (офф)
 				{pattern = "РЕКЛАМА (.+)%. Отправил (.+)%[(%d+)%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
 				{pattern = "(.+)%. Отправил (.+)%[(%d+)%]", prefix = "{ffeadb}", suffix = "{ff9a76} "},
 			}
