@@ -1,6 +1,6 @@
 script_name("{ff7e14}DiChat")
 script_author("{ff7e14}solodi")
-script_version("1.9.17")
+script_version("1.9.18")
 
 local encoding = require 'encoding'
 
@@ -404,6 +404,10 @@ function se.onServerMessage(color, text)
 	end
 
 	if string.find(text, "отправил игрока", 1, true) and string.find(text, "в ТСР по причине", 1, true) then
+		return { 0xffe066FF, text }
+	end
+
+		if string.find(text, "отправил оффлайн игрока", 1, true) and string.find(text, "в ТСР по причине", 1, true) then
 		return { 0xffe066FF, text }
 	end
 
